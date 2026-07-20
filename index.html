@@ -4,50 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 شاشة العروض والبث البيطري الذكية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- مكتبة توليد QR Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --bg-main: #f4f8fa;
+            --bg-main: #f0fdfa;
             --panel-white: #ffffff;
             --primary-teal: #0d9488;
             --dark-teal: #0f766e;
             --light-mint: #ccfbf1;
-            --accent-orange: #db6815;
+            --accent-orange: #ea580c;
             --text-main: #0f172a;
             --text-muted: #475569;
-            --border-color: #ccfbf1;
+            --border-color: #99f6e4;
+            --gold: #d97706;
         }
 
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg-main); color: var(--text-main); overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
-        /* Header الطبي الاحترافي */
+        /* Header الطبي */
         .header {
             background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
             color: #fff;
-            padding: 20px 40px;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.2);
+            box-shadow: 0 4px 20px rgba(13, 148, 136, 0.25);
             border-bottom: 4px solid #2dd4bf;
             z-index: 10;
         }
-        .pharmacy-title { font-size: 2.2rem; font-weight: 800; }
+        .pharmacy-title { font-size: 2rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .status-badge {
-            padding: 8px 20px;
+            padding: 8px 22px;
             border-radius: 30px;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1rem;
             background: #ef4444;
             color: #fff;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
         }
-        .status-badge.online { background: #10b981; }
+        .status-badge.online { 
+            background: #10b981; 
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
 
-        /* حاوية العرض الرئيسية للمراحل */
+        /* حاوية العرض */
         .stage-container {
             flex: 1;
             position: relative;
@@ -55,46 +59,87 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 30px;
+            padding: 25px;
         }
 
         .stage-view {
             position: absolute;
-            width: 90%;
-            height: 90%;
+            width: 92%;
+            height: 92%;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: scale(0.96) translateY(15px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             display: none;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
         .stage-view.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: scale(1) translateY(0);
             display: flex;
         }
 
-        /* 1. جدول الأسعار الشامل */
+        /* 🔴 شاشة الانفصال (Offline Dashboard) */
+        .offline-hero {
+            text-align: center;
+            width: 100%;
+            max-width: 1100px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .offline-title {
+            font-size: 3.8rem;
+            font-weight: 900;
+            color: var(--dark-teal);
+            margin-bottom: 15px;
+            text-shadow: 0 4px 10px rgba(13, 148, 136, 0.15);
+            letter-spacing: -1px;
+        }
+        .offline-subtitle {
+            font-size: 1.6rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .service-card {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.08);
+            transition: all 0.3s ease;
+        }
+        .service-card:hover { transform: translateY(-5px); border-color: var(--primary-teal); }
+        .service-icon { font-size: 3rem; margin-bottom: 12px; display: block; }
+        .service-name { font-size: 1.3rem; font-weight: 800; color: var(--dark-teal); }
+
+        /* 1. جدول الأسعار */
         .table-card {
             background: var(--panel-white);
-            border-radius: 20px;
+            border-radius: 24px;
             width: 100%;
             height: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
             border: 2px solid var(--border-color);
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
         .table-header {
-            background: var(--primary-teal);
+            background: linear-gradient(90deg, var(--primary-teal), var(--dark-teal));
             color: white;
             padding: 18px 30px;
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             text-align: center;
         }
         .table-body { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
@@ -103,50 +148,87 @@
             grid-template-columns: 2fr 1fr 1fr;
             padding: 16px 30px;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             font-weight: 700;
             text-align: center;
             align-items: center;
         }
         .table-row:nth-child(even) { background: #f0fdfa; }
-        .price-retail { color: var(--primary-teal); }
-        .price-wholesale { color: var(--accent-orange); }
+        .price-retail { color: var(--primary-teal); font-weight: 800; }
+        .price-wholesale { color: var(--accent-orange); font-weight: 800; }
 
-        /* 2. كارت العرض الخاص والمميز */
+        /* 2. كارت الأصناف المميزة */
         .featured-card {
-            background: var(--panel-white);
-            border-radius: 25px;
-            padding: 40px;
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 45px;
             width: 80%;
+            max-width: 900px;
             border: 3px solid var(--primary-teal);
-            box-shadow: 0 15px 35px rgba(13, 148, 136, 0.15);
+            box-shadow: 0 20px 40px rgba(13, 148, 136, 0.18);
             text-align: center;
             position: relative;
         }
         .badge-featured {
-            background: var(--primary-teal);
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
             color: white;
-            padding: 8px 30px;
-            border-radius: 20px;
-            font-size: 1.3rem;
+            padding: 10px 35px;
+            border-radius: 30px;
+            font-size: 1.4rem;
             font-weight: 800;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
         }
-        .item-title { font-size: 2.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 15px; }
-        .old-price-tag { color: #ef4444; text-decoration: line-through; font-size: 1.5rem; margin-bottom: 10px; font-weight: 700; }
+        .item-title { font-size: 3rem; font-weight: 900; color: var(--text-main); margin-bottom: 15px; }
+        .old-price-tag { color: #ef4444; text-decoration: line-through; font-size: 1.6rem; margin-bottom: 15px; font-weight: 700; }
         .price-boxes { display: flex; gap: 20px; justify-content: center; margin-top: 25px; }
-        .p-box { flex: 1; background: #f0fdfa; padding: 20px; border-radius: 15px; border: 1px solid var(--border-color); }
-        .p-box.wholesale { background: #fff7ed; }
-        .p-box .label { font-size: 1.2rem; color: var(--text-muted); font-weight: 600; }
-        .p-box .val { font-size: 2.2rem; font-weight: 800; }
+        .p-box { flex: 1; background: #f0fdfa; padding: 20px; border-radius: 20px; border: 2px solid var(--border-color); }
+        .p-box.wholesale { background: #fff7ed; border-color: #ffedd5; }
+        .p-box .label { font-size: 1.2rem; color: var(--text-muted); font-weight: 700; margin-bottom: 5px; }
+        .p-box .val { font-size: 2.5rem; font-weight: 900; }
 
-        /* 3. الإرشادات والإعلانات المصممة كلوحة */
+        /* 3. شاشة التتر السينمائي للإعلان */
+        .ticker-stage-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #ffffff 0%, #ccfbf1 100%);
+            border-radius: 30px;
+            padding: 40px;
+        }
+        .ticker-stage-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--dark-teal);
+            margin-bottom: 40px;
+        }
+        .cinema-ticker-box {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            background: var(--dark-teal);
+            padding: 30px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(15, 118, 110, 0.3);
+        }
+        .cinema-ticker-text {
+            display: inline-block;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            animation: marquee 25s linear infinite;
+        }
+
+        /* 4 & 5. الفروع والتواصل */
         .board-card {
             background: var(--panel-white);
-            border-radius: 20px;
+            border-radius: 25px;
             width: 85%;
-            height: 80%;
+            height: 85%;
             border: 3px solid var(--primary-teal);
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
@@ -154,61 +236,60 @@
             flex-direction: column;
             align-items: center;
         }
-        .board-title { font-size: 2rem; font-weight: 800; color: var(--primary-teal); margin-bottom: 20px; }
-        .board-content { font-size: 1.8rem; font-weight: 700; line-height: 2.2; color: var(--text-main); text-align: center; width: 100%; }
-
-        /* قائمة الصفوف (فروع - أرقام تواصل) */
-        .list-container { width: 85%; display: flex; flex-direction: column; gap: 15px; }
+        .board-title { font-size: 2.2rem; font-weight: 900; color: var(--primary-teal); margin-bottom: 25px; }
+        .board-content { font-size: 2rem; font-weight: 700; line-height: 2.3; color: var(--text-main); text-align: center; width: 100%; }
+        .list-container { width: 90%; display: flex; flex-direction: column; gap: 15px; max-height: 80%; overflow-y: auto; }
         .list-item {
-            background: var(--panel-white);
+            background: #ffffff;
             padding: 20px 30px;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-            font-size: 1.6rem;
-            font-weight: 700;
+            border-radius: 18px;
+            border: 2px solid var(--border-color);
+            font-size: 1.7rem;
+            font-weight: 800;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            color: var(--dark-teal);
         }
 
-        /* 📍 نافذة كود QR لاقتران الموبايل (عائمة بأعلى اليسار) */
+        /* نافذة QR */
         .qr-connect-box {
             position: fixed;
-            top: 140px;
-            left: 20px;
+            top: 100px;
+            left: 25px;
             background: var(--panel-white);
             padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
             border: 2px solid var(--border-color);
             text-align: center;
             z-index: 100;
         }
-        .qr-connect-box p { font-size: 0.85rem; font-weight: 700; color: var(--primary-teal); margin-top: 5px; }
+        .qr-connect-box p { font-size: 0.85rem; font-weight: 800; color: var(--primary-teal); margin-top: 6px; }
 
         /* الشريط المتحرك السفلي */
         .footer-ticker {
             background: var(--panel-white);
-            height: 80px;
+            height: 75px;
             border-top: 4px solid var(--primary-teal);
             display: flex;
             align-items: center;
             overflow: hidden;
             white-space: nowrap;
-            position: relative;
         }
         .ticker-text {
             display: inline-block;
             font-size: 1.6rem;
             font-weight: 800;
             color: var(--text-main);
-            animation: marquee 30s linear infinite;
+            animation: marquee 35s linear infinite;
         }
+
         @keyframes marquee { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
 
-    <!-- نافذة ربط QR بالموبايل -->
+    <!-- نافذة QR للربط -->
     <div class="qr-connect-box">
         <div id="qrcode"></div>
         <p>📱 امسح لربط السيرفر</p>
@@ -220,12 +301,43 @@
         <div id="statusBadge" class="status-badge">مفصول 🔴</div>
     </div>
 
-    <!-- Stages Container -->
+    <!-- Stage Container -->
     <div class="stage-container">
         
-        <!-- مرحلة 0: جدول الأسعار الشامل -->
-        <div class="stage-view active" id="stage0">
-            <h2 style="font-size: 2rem; color: var(--primary-teal); margin-bottom: 15px;">📋 الدليل الموحد لأسعار المستحضرات والأدوية البيطرية</h2>
+        <!-- مرحلة 0: حالة الانفصال عن السيرفر -->
+        <div class="stage-view active" id="stageOffline">
+            <div class="offline-hero">
+                <h1 class="offline-title" id="offlinePharmacyTitle">صيدلية الدكتور أحمد إبراهيم البيطرية</h1>
+                <p class="offline-subtitle">رعايتكم البيطرية أولويتنا دائماً .. أحدث العلاجات والخدمات الطبية المتكاملة</p>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <span class="service-icon">🖥️</span>
+                        <div class="service-name">فحص بالسونار</div>
+                    </div>
+                    <div class="service-card">
+                        <span class="service-icon">💊</span>
+                        <div class="service-name">أدوية ومستلزمات</div>
+                    </div>
+                    <div class="service-card">
+                        <span class="service-icon">🧪</span>
+                        <div class="service-name"> لقاحات معتمدة</div>
+                    </div>
+                    <div class="service-card">
+                        <span class="service-icon">🛡️</span>
+                        <div class="service-name">برامج تحصينات</div>
+                    </div>
+                    <div class="service-card">
+                        <span class="service-icon">🚑</span>
+                        <div class="service-name">زيارات منزلية</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- مرحلة 1: جدول الأسعار الشامل -->
+        <div class="stage-view" id="stageTable">
+            <h2 style="font-size: 2.2rem; color: var(--primary-teal); margin-bottom: 15px; font-weight: 900;">📋 الدليل الموحد لأسعار المستحضرات والأدوية</h2>
             <div class="table-card">
                 <div class="table-header">
                     <div>اسم الصنف الدوائي</div>
@@ -236,69 +348,62 @@
             </div>
         </div>
 
-        <!-- مرحلة 1: كارت الأصناف المميزة -->
-        <div class="stage-view" id="stage1">
+        <!-- مرحلة 2: الأصناف المميزة -->
+        <div class="stage-view" id="stageFeatured">
             <div class="featured-card" id="featuredCard"></div>
         </div>
 
-        <!-- مرحلة 2: الإرشادات والنصائح -->
-        <div class="stage-view" id="stage2">
+        <!-- مرحلة 3: الإرشادات للنصائح -->
+        <div class="stage-view" id="stageAds">
             <div class="board-card">
                 <div class="board-title">💡 الإرشادات والنصائح الطبية الطارئة للمزارع</div>
                 <div class="board-content" id="adTextContent"></div>
             </div>
         </div>
 
-        <!-- مرحلة 3: الإعلان العريض الخالي من البراويز -->
-        <div class="stage-view" id="stage3">
-            <div class="board-card" style="border-width: 4px;">
-                <div class="board-title">📢 تنويه وإعلان هام من الصيدلية</div>
-                <div class="board-content" id="mainOfferTickerText"></div>
+        <!-- مرحلة 4: إعلان التتر السينمائي -->
+        <div class="stage-view" id="stageOffers">
+            <div class="ticker-stage-container">
+                <div class="ticker-stage-title">📢 أقوى العروض والتنويهات البيطرية الحصرية</div>
+                <div class="cinema-ticker-box">
+                    <div class="cinema-ticker-text" id="mainOfferTickerText"></div>
+                </div>
             </div>
         </div>
 
-        <!-- مرحلة 4: الفروع -->
-        <div class="stage-view" id="stage4">
-            <h2 style="font-size: 2rem; color: var(--primary-teal); margin-bottom: 20px;">📍 فروعنا ومناطق الخدمة والعيادات المتنقلة</h2>
-            <div class="list-container" id="branchesList"></div>
-        </div>
-
-        <!-- مرحلة 5: أرقام التواصل -->
-        <div class="stage-view" id="stage5">
-            <h2 style="font-size: 2rem; color: #10b981; margin-bottom: 20px;">📞 أرقام التواصل وخدمة الرد السريع للمزارع</h2>
-            <div class="list-container" id="contactsList"></div>
+        <!-- مرحلة 5: الفروع والأرقام -->
+        <div class="stage-view" id="stageInfo">
+            <h2 style="font-size: 2.2rem; color: var(--primary-teal); margin-bottom: 20px; font-weight: 900;">📍 فروعنا ومناطق الخدمة وأرقام التواصل</h2>
+            <div class="list-container" id="infoList"></div>
         </div>
 
     </div>
 
-    <!-- Ticker Bar -->
+    <!-- Ticker السفلي -->
     <div class="footer-ticker">
         <div class="ticker-text" id="tickerText">✨ مرحباً بكم في صيدليتنا.. نتشرف بخدمتكم دائماً ورعاية ثرواتكم الحيوانية.. ✨</div>
     </div>
 
     <script>
         let ws = null;
-        let currentStage = 0;
+        let isConnected = false;
+        let currentStageIndex = 0;
+
         let dataStore = {
             PharmacyName: "صيدلية الدكتور أحمد إبراهيم البيطرية",
             Products: [],
             FeaturedProducts: [],
-            TextAds: [],
+            Ads: [],
             Offers: [],
             Branches: [],
             Contacts: [],
-            TickerText: "مرحباً بكم..."
+            TickerText: "مرحباً بكم في صيدليتنا البيطرية.."
         };
 
-        // 1. توليد كود QR يفتح صفحة الموبايل للمسح
+        // توليد QR لفتح الموبايل
         const scannerMobileUrl = window.location.origin + "/mobile-scanner.html";
-        new QRCode(document.getElementById("qrcode"), {
-            text: scannerMobileUrl,
-            width: 100,
-            height: 100
-        });
+        new QRCode(document.getElementById("qrcode"), { text: scannerMobileUrl, width: 90, height: 90 });
 
-        // الاستماع لأمر المسح من الموبايل للاقتران بالسيرفر
         window.addEventListener("message", (event) => {
             if (event.data && event.data.type === "CONNECT_WS") {
                 connectToServer(event.data.url);
@@ -309,30 +414,36 @@
             try {
                 ws = new WebSocket(wsUrl);
                 ws.onopen = () => {
+                    isConnected = true;
                     document.getElementById('statusBadge').innerText = "متصل حي 🟢";
                     document.getElementById('statusBadge').classList.add('online');
                 };
                 ws.onclose = () => {
+                    isConnected = false;
                     document.getElementById('statusBadge').innerText = "مفصول 🔴";
                     document.getElementById('statusBadge').classList.remove('online');
                 };
                 ws.onmessage = (event) => {
-                    if (event.data.startsWith("DATA|")) {
-                        const payload = JSON.parse(event.data.substring(5));
+                    try {
+                        const payload = JSON.parse(event.data);
                         updateData(payload);
+                    } catch (e) {
+                        console.error("Error parsing JSON:", e);
                     }
                 };
             } catch (err) {
-                console.error("Connection Error:", err);
+                console.error("WebSocket Error:", err);
             }
         }
 
         function updateData(data) {
             dataStore = data;
-            document.getElementById('pharmacyName').innerText = "🏥 " + (data.PharmacyName || "صيدلية الدكتور أحمد إبراهيم");
-            document.getElementById('tickerText').innerText = data.TickerText || "";
+            const name = data.PharmacyName || "صيدلية الدكتور أحمد إبراهيم البيطرية";
+            document.getElementById('pharmacyName').innerText = "🏥 " + name;
+            document.getElementById('offlinePharmacyTitle').innerText = name;
+            document.getElementById('tickerText').innerText = data.TickerText || "مرحباً بكم...";
 
-            // 1. جدول الأسعار الشامل
+            // جدول الأسعار
             const tBody = document.getElementById('tableBody');
             tBody.innerHTML = "";
             (data.Products || []).forEach(p => {
@@ -345,31 +456,30 @@
                 `;
             });
 
-            // 2. كروت العروض المميزة
             dataStore.FeaturedProducts = (data.Products || []).filter(p => p.IsFeatured);
-
-            // 3. الفروع
-            const bList = document.getElementById('branchesList');
-            bList.innerHTML = (data.Branches || []).map(b => `<div class="list-item">${b}</div>`).join('');
-
-            // 4. التوصيل والأرقام
-            const cList = document.getElementById('contactsList');
-            cList.innerHTML = (data.Contacts || []).map(c => `<div class="list-item">${c}</div>`).join('');
         }
 
-        // 🔄 محرك التبديل التلقائي الاحترافي بين Stages بنفس نظام C#
+        // محرك التبديل
         let featuredIndex = 0;
         let adIndex = 0;
 
         setInterval(() => {
             document.querySelectorAll('.stage-view').forEach(el => el.classList.remove('active'));
 
-            currentStage = (currentStage + 1) % 6;
+            if (!isConnected) {
+                document.getElementById('stageOffline').classList.add('active');
+                return;
+            }
 
-            if (currentStage === 1 && dataStore.FeaturedProducts.length > 0) {
+            // التنقل بين المراحل في حالة الاتصال
+            const activeStages = ['stageTable', 'stageFeatured', 'stageAds', 'stageOffers', 'stageInfo'];
+            currentStageIndex = (currentStageIndex + 1) % activeStages.length;
+            const currentStageId = activeStages[currentStageIndex];
+
+            if (currentStageId === 'stageFeatured' && dataStore.FeaturedProducts.length > 0) {
                 const item = dataStore.FeaturedProducts[featuredIndex];
                 document.getElementById('featuredCard').innerHTML = `
-                    <span class="badge-featured">🔥 عرض خاص وصنف مميز حالياً 🔥</span>
+                    <span class="badge-featured">⭐ صنف ممتاز وعرض خاص ⭐</span>
                     <div class="item-title">${item.ItemName}</div>
                     ${item.OldPrice ? `<div class="old-price-tag">السعر السابق: ${item.OldPrice} ج.م</div>` : ''}
                     <div class="price-boxes">
@@ -384,15 +494,19 @@
                     </div>
                 `;
                 featuredIndex = (featuredIndex + 1) % dataStore.FeaturedProducts.length;
-            } else if (currentStage === 2 && dataStore.TextAds && dataStore.TextAds.length > 0) {
-                document.getElementById('adTextContent').innerText = dataStore.TextAds[adIndex];
-                adIndex = (adIndex + 1) % dataStore.TextAds.length;
-            } else if (currentStage === 3) {
-                document.getElementById('mainOfferTickerText').innerText = dataStore.Offers && dataStore.Offers.length > 0 ? dataStore.Offers.join(" ◀◀ ") : "تابعوا أقوى العروض والمفاجآت اليومية لدى صيدليتنا!";
+            } else if (currentStageId === 'stageAds' && dataStore.Ads && dataStore.Ads.length > 0) {
+                document.getElementById('adTextContent').innerText = dataStore.Ads[adIndex];
+                adIndex = (adIndex + 1) % dataStore.Ads.length;
+            } else if (currentStageId === 'stageOffers') {
+                const text = dataStore.Offers && dataStore.Offers.length > 0 ? dataStore.Offers.join(" 🌟 ") : "تابعوا أقوى المفاجآت اليومية لدى صيدليتنا!";
+                document.getElementById('mainOfferTickerText').innerText = text;
+            } else if (currentStageId === 'stageInfo') {
+                const list = [...(dataStore.Branches || []), ...(dataStore.Contacts || [])];
+                document.getElementById('infoList').innerHTML = list.map(i => `<div class="list-item">${i}</div>`).join('');
             }
 
-            document.getElementById(`stage${currentStage}`).classList.add('active');
-        }, 8000); // الانتقال كل 8 ثوانٍ بشكل انسيابي
+            document.getElementById(currentStageId).classList.add('active');
+        }, 8000);
     </script>
 </body>
 </html>

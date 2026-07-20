@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 شاشة العروض والبث البيطري المباشر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- QR Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        :root {
+            --bg-dark: #0b1329;
+            --card-bg: #1e293b;
+            --primary-teal: #0d9488;
+            --accent-cyan: #06b6d4;
+            --text-light: #f8fafc;
+            --price-gold: #f59e0b;
+        }
+
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg-dark); color: var(--text-light); overflow-x: hidden; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-teal);
+        }
+        .pharmacy-title { font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan); }
+        .status-badge { padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; background: #ef4444; }
+        .status-badge.online { background: #10b981; }
+
+        /* Scanner Modal */
+        #scanner-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+        #reader { width: 320px; background: white; border-radius: 12px; overflow: hidden; }
+
+        /* Main Content Grid */
+        .container { padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .product-card {
+            background: var(--card-bg); border-radius: 15px; padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1); position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.2s;
+        }
+        .product-card.featured { border: 2px solid var(--price-gold); }
+        .badge-featured { position: absolute; top: 10px; left: 10px; background: var(--price-gold); color: black; font-weight: bold; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; }
+        .item-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
+        .price-box { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .current-price { font-size: 1.5rem; font-weight: 800; color: var(--accent-cyan); }
+        .old-price { text-decoration: line-through; color: #94a3b8; font-size: 1rem; }
+
+        /* Ticker Footer */
+        .ticker-bar {
+            position: fixed; bottom: 0; width: 100%; background: var(--primary-teal);
+            color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-size: 1.2rem; font-weight: bold;
+        }
+        .ticker-text { display: inline-block; animation: marquee 25s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    </style>
+</head>
+<body>
+
+    <!-- Scanner Window -->
+    <div id="scanner-modal">
+        <h2 style="margin-bottom: 15px; color: white;">📷 وجه كاميرا الموبايل لكود QR بالكمبيوتر</h2>
+        <div id="reader"></div>
+        <button onclick="manualConnect()" style="margin-top: 15px; padding: 10px 20px; border: none; border-radius: 8px; background: var(--primary-teal); color: white; font-weight: bold; cursor: pointer;">إدخال العنوان يدوياً</button>
+    </div>
+
+    <!-- Main Header -->
+    <div class="header">
+        <div class="pharmacy-title" id="pharmacyName">🏥 جاري التحميل...</div>
+        <div id="statusBadge" class="status-badge">مفصول</div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="container" id="productGrid"></div>
+
+    <!-- Marquee Ticker -->
+    <div class="ticker-bar">
+        <div class="ticker-text" id="tickerText">مرحباً بكم في صيدليتنا...</div>
+    </div>
+
+    <script>
+        let ws = null;
+
+        // Auto-Start Scanner
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => {
+                html5QrCode.stop();
+                document.getElementById('scanner-modal').style.display = 'none';
+                connectToServer(decodedText);
+            },
+            (errorMessage) => {}
+        );
+
+        function manualConnect() {
+            let ip = prompt("أدخل رابط السيرفر (مثال: ws://192.168.1.100:8080):");
+            if (ip) {
+                document.getElementById('scanner-modal').style.display = 'none';
+                connectToServer(ip);
+            }
+        }
+
+        function connectToServer(wsUrl) {
+            try {
+                ws = new WebSocket(wsUrl);
+
+                ws.onopen = () => {
+                    document.getElementById('statusBadge').innerText = "متصل حي 🟢";
+                    document.getElementById('statusBadge').classList.add('online');
+                };
+
+                ws.onclose = () => {
+                    document.getElementById('statusBadge').innerText = "مفصول 🔴";
+                    document.getElementById('statusBadge').classList.remove('online');
+                };
+
+                ws.onmessage = (event) => {
+                    if (event.data.startsWith("DATA|")) {
+                        const payload = JSON.parse(event.data.substring(5));
+                        renderUI(payload);
+                    }
+                };
+            } catch (err) {
+                alert("خطأ في الاتصال: " + err.message);
+            }
+        }
+
+        function renderUI(data) {
+            document.getElementById('pharmacyName').innerText = "🏥 " + data.PharmacyName;
+            document.getElementById('tickerText').innerText = data.TickerText;
+
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = "";
+
+            data.Products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `product-card ${p.IsFeatured ? 'featured' : ''}`;
+                card.innerHTML = `
+                    ${p.IsFeatured ? '<span class="badge-featured">⭐ عرض خاص</span>' : ''}
+                    <div class="item-name">${p.ItemName}</div>
+                    <div class="price-box">
+                        <span class="current-price">${p.RetailPrice} ج.م</span>
+                        ${p.OldPrice ? `<span class="old-price">${p.OldPrice} ج.م</span>` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📱 ماسح الاتصال بالشاشة الكبيرة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        :root {
+            --bg-light: #f0fdfa;
+            --primary-teal: #0d9488;
+            --accent-mint: #14b8a6;
+            --text-dark: #0f172a;
+        }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 1.5rem; color: var(--primary-teal); font-weight: 800; }
+        .header p { font-size: 0.95rem; color: #475569; }
+        
+        .scanner-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.15);
+            border: 2px solid #ccfbf1;
+            text-align: center;
+        }
+        #reader { width: 100%; border-radius: 12px; overflow: hidden; border: 2px dashed var(--primary-teal); }
+        .status { margin-top: 15px; font-weight: 700; color: var(--primary-teal); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🩺 الربط السريع بالشاشة الكبيرة</h1>
+        <p>وجه كاميرا الموبايل نحو كود QR السيرفر للربط المباشر</p>
+    </div>
+
+    <div class="scanner-card">
+        <div id="reader"></div>
+        <div id="status" class="status">📷 الكاميرا جاهزة للمسح...</div>
+    </div>
+
+    <script>
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 220, height: 220 } },
+            (decodedText) => {
+                html5QrCode.stop();
+                document.getElementById('status').innerText = "✅ تم الاقتران بنجاح! جاري تحويل الشاشة...";
+                
+                // فتح رابط للاتصال إذا كان الرابط المرسل يتضمن عنوان سيرفر
+                if (window.opener) {
+                    window.opener.postMessage({ type: "CONNECT_WS", url: decodedText }, "*");
+                    setTimeout(() => window.close(), 1500);
+                } else {
+                    alert("تم قراءة السيرفر: " + decodedText);
+                }
+            },
+            (errorMessage) => {}
+        );
+    </script>
+</body>
+</html>

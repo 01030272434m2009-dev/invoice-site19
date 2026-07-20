@@ -3,34 +3,52 @@
 <head>
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>📱 ماسح الاتصال بالشاشة الكبيرة</title>
+    <title>📱 ماسح الاتصال بالشاشة البيطرية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         :root {
             --bg-light: #f0fdfa;
             --primary-teal: #0d9488;
+            --dark-teal: #0f766e;
             --accent-mint: #14b8a6;
             --text-dark: #0f172a;
         }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: 1.5rem; color: var(--primary-teal); font-weight: 800; }
-        .header p { font-size: 0.95rem; color: #475569; }
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 1.7rem; color: var(--dark-teal); font-weight: 800; margin-bottom: 5px; }
+        .header p { font-size: 1rem; color: #475569; font-weight: 600; }
         
         .scanner-card {
             background: #ffffff;
             width: 100%;
-            max-width: 380px;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.15);
+            max-width: 400px;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(13, 148, 136, 0.15);
             border: 2px solid #ccfbf1;
             text-align: center;
         }
-        #reader { width: 100%; border-radius: 12px; overflow: hidden; border: 2px dashed var(--primary-teal); }
-        .status { margin-top: 15px; font-weight: 700; color: var(--primary-teal); }
+        #reader { width: 100%; border-radius: 16px; overflow: hidden; border: 3px dashed var(--primary-teal); }
+        .status { 
+            margin-top: 20px; 
+            font-weight: 800; 
+            font-size: 1.1rem;
+            color: var(--primary-teal); 
+            background: #ccfbf1;
+            padding: 12px;
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body>
@@ -49,17 +67,19 @@
         const html5QrCode = new Html5Qrcode("reader");
         html5QrCode.start(
             { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 220, height: 220 } },
+            { fps: 10, qrbox: { width: 230, height: 230 } },
             (decodedText) => {
                 html5QrCode.stop();
-                document.getElementById('status').innerText = "✅ تم الاقتران بنجاح! جاري تحويل الشاشة...";
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = "✅ تم الاقتران بنجاح! جاري الاتصال...";
+                statusEl.style.background = "#dcfce7";
+                statusEl.style.color = "#15803d";
                 
-                // فتح رابط للاتصال إذا كان الرابط المرسل يتضمن عنوان سيرفر
                 if (window.opener) {
                     window.opener.postMessage({ type: "CONNECT_WS", url: decodedText }, "*");
-                    setTimeout(() => window.close(), 1500);
+                    setTimeout(() => window.close(), 1200);
                 } else {
-                    alert("تم قراءة السيرفر: " + decodedText);
+                    alert("تم قراءة رابط السيرفر بنجاح: " + decodedText);
                 }
             },
             (errorMessage) => {}

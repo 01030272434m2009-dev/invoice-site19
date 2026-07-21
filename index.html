@@ -45,33 +45,35 @@
             flex-direction: column;
         }
 
-        /* Header الشاشة */
+        /* Header الشاشة متجاوب */
         .header {
             background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
             color: #fff;
-            padding: 1vh 3vw;
-            height: 10vh;
-            min-height: 75px;
+            padding: 1vh 2vw;
+            height: 9vh;
+            min-height: 60px;
+            max-height: 90px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 25px rgba(0,0,0,0.4);
-            border-bottom: 5px solid #2dd4bf;
+            border-bottom: 4px solid #2dd4bf;
             z-index: 10;
+            flex-shrink: 0;
         }
         
         .pharmacy-title {
-            font-size: clamp(1.5rem, 3vw, 3rem);
+            font-size: clamp(1.2rem, 2.2vw, 2.5rem);
             font-weight: 900;
             text-shadow: 0 3px 6px rgba(0,0,0,0.3);
             white-space: nowrap;
         }
 
         .status-badge {
-            padding: 0.8vh 2vw;
+            padding: 0.5vh 1.5vw;
             border-radius: 40px;
             font-weight: 800;
-            font-size: clamp(0.9rem, 1.3vw, 1.4rem);
+            font-size: clamp(0.8rem, 1.1vw, 1.2rem);
             background: #ef4444;
             color: #fff;
             transition: all 0.5s ease;
@@ -92,21 +94,23 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5vh 2vw;
-            height: 78vh;
+            padding: 1vh 1.5vw;
+            width: 100%;
+            height: calc(100vh - 17vh);
         }
 
         .stage-view {
             position: absolute;
-            width: 96%;
-            height: 96%;
+            width: 100%;
+            height: 100%;
             opacity: 0;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transform: scale(0.97);
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            transform: scale(0.98);
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+            padding: 10px;
         }
 
         .stage-view.active {
@@ -118,7 +122,7 @@
         .stage-view.full-screen-stage {
             width: 100% !important;
             height: 100% !important;
-            padding: 1vh 1vw;
+            padding: 0;
         }
 
         .offline-hero {
@@ -126,84 +130,82 @@
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255, 0.96);
-            padding: 3vh 3vw;
-            border-radius: 25px;
+            padding: 2vh 2vw;
+            border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-around;
         }
 
         .offline-title {
-            font-size: clamp(2rem, 3.8vw, 3.8rem);
+            font-size: clamp(1.8rem, 3.2vw, 3.5rem);
             font-weight: 900;
             color: var(--dark-teal);
-            margin-bottom: 1.5vh;
+            margin-bottom: 0.5vh;
         }
 
         .offline-subtitle {
-            font-size: clamp(1.1rem, 1.8vw, 1.8rem);
+            font-size: clamp(1rem, 1.5vw, 1.6rem);
             color: var(--text-muted);
-            margin-bottom: 3vh;
+            margin-bottom: 1.5vh;
             font-weight: 700;
         }
 
-        /* شبكة الخدمات الشيك والعصرية */
+        /* شبكة الخدمات المقاومة للشاشات الضخمة */
         .services-grid-chic {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
             width: 100%;
             max-height: 100%;
-            padding: 15px;
+            padding: 10px;
             justify-content: center;
+            align-items: center;
         }
 
         .service-card-chic {
             background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
             border: 2px solid var(--border-color);
-            border-radius: 20px;
-            padding: 25px 20px;
+            border-radius: 15px;
+            padding: 15px 10px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.08);
+            box-shadow: 0 8px 16px rgba(13, 148, 136, 0.08);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s ease;
         }
 
         .service-card-chic::before {
             content: '';
             position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            height: 5px;
+            top: 0; right: 0; left: 0;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary-teal), var(--accent-orange));
         }
 
         .service-icon-chic { 
-            font-size: clamp(2.8rem, 3.5vw, 4rem); 
-            margin-bottom: 12px; 
+            font-size: clamp(2rem, 3vw, 3.2rem); 
+            margin-bottom: 8px; 
         }
 
         .service-name-chic { 
-            font-size: clamp(1.3rem, 1.7vw, 1.8rem); 
+            font-size: clamp(1.1rem, 1.4vw, 1.6rem); 
             font-weight: 900; 
             color: var(--dark-teal); 
         }
 
-        /* جدول الأسعار السلس والشيك */
+        /* جدول الأسعار السلس */
         .table-card {
             background: var(--panel-white);
-            border-radius: 20px;
+            border-radius: 15px;
             width: 100%;
             height: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            border: 4px solid var(--border-color);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 3px solid var(--border-color);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -212,10 +214,10 @@
         .table-header {
             background: linear-gradient(90deg, var(--primary-teal), var(--dark-teal));
             color: white;
-            padding: 2vh 2vw;
+            padding: 1.5vh 2vw;
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            font-size: clamp(1.4rem, 2.2vw, 2.4rem);
+            font-size: clamp(1.2rem, 1.8vw, 2.2rem);
             font-weight: 900;
             text-align: center;
             z-index: 2;
@@ -225,15 +227,14 @@
         .table-body {
             flex: 1;
             overflow-y: hidden;
-            scroll-behavior: auto;
         }
 
         .table-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            padding: 2.2vh 2vw;
+            padding: 1.8vh 2vw;
             border-bottom: 2px solid #e2e8f0;
-            font-size: clamp(1.2rem, 1.8vw, 1.9rem);
+            font-size: clamp(1.1rem, 1.5vw, 1.8rem);
             font-weight: 800;
             text-align: center;
             align-items: center;
@@ -247,20 +248,20 @@
         .google-search-box {
             background: #ffffff;
             border-radius: 50px;
-            padding: 15px 35px;
-            width: 85%;
-            max-width: 950px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            padding: 10px 25px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             border: 3px solid #e2e8f0;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
-        .google-icon { font-size: 2.2rem; }
+        .google-icon { font-size: 1.8rem; }
         .search-input-text {
-            font-size: clamp(1.3rem, 2.2vw, 2.4rem);
+            font-size: clamp(1.1rem, 1.8vw, 2rem);
             font-weight: 800;
             color: #1e293b;
             flex: 1;
@@ -271,13 +272,13 @@
 
         .featured-card {
             background: #ffffff;
-            border-radius: 35px;
-            padding: 4vh 4vw;
+            border-radius: 25px;
+            padding: 3vh 3vw;
             width: 90%;
-            max-width: 1100px;
-            height: 70%;
-            border: 5px solid var(--primary-teal);
-            box-shadow: 0 25px 60px rgba(13, 148, 136, 0.3);
+            max-width: 1000px;
+            height: 75%;
+            border: 4px solid var(--primary-teal);
+            box-shadow: 0 20px 50px rgba(13, 148, 136, 0.25);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -288,54 +289,54 @@
         .badge-featured {
             background: linear-gradient(135deg, var(--gold), #f59e0b);
             color: white;
-            padding: 1vh 3vw;
-            border-radius: 40px;
-            font-size: clamp(1.2rem, 1.8vw, 2rem);
+            padding: 0.8vh 2.5vw;
+            border-radius: 30px;
+            font-size: clamp(1rem, 1.4vw, 1.6rem);
             font-weight: 900;
-            box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4);
+            box-shadow: 0 6px 15px rgba(217, 119, 6, 0.3);
         }
 
-        .item-title { font-size: clamp(2.2rem, 3.8vw, 4rem); font-weight: 900; color: var(--text-main); }
-        .old-price-tag { color: #ef4444; text-decoration: line-through; font-size: clamp(1.2rem, 1.8vw, 2rem); font-weight: 800; }
+        .item-title { font-size: clamp(1.8rem, 3vw, 3.5rem); font-weight: 900; color: var(--text-main); }
+        .old-price-tag { color: #ef4444; text-decoration: line-through; font-size: clamp(1rem, 1.5vw, 1.8rem); font-weight: 800; }
         
         .price-boxes { display: flex; gap: 2vw; width: 100%; justify-content: center; }
-        .p-box { flex: 1; background: #f0fdfa; padding: 2vh 1vw; border-radius: 20px; border: 3px solid var(--border-color); }
+        .p-box { flex: 1; background: #f0fdfa; padding: 1.5vh 1vw; border-radius: 15px; border: 2px solid var(--border-color); }
         .p-box.wholesale { background: #fff7ed; border-color: #ffedd5; }
-        .p-box .label { font-size: clamp(1.1rem, 1.5vw, 1.5rem); color: var(--text-muted); font-weight: 800; margin-bottom: 5px; }
-        .p-box .val { font-size: clamp(2rem, 3.2vw, 3.5rem); font-weight: 900; }
+        .p-box .label { font-size: clamp(0.9rem, 1.2vw, 1.3rem); color: var(--text-muted); font-weight: 800; margin-bottom: 4px; }
+        .p-box .val { font-size: clamp(1.6rem, 2.5vw, 3rem); font-weight: 900; }
 
         /* شاشة التنويهات والعروض */
         .board-ad-container {
             width: 95%;
             height: 90%;
             background: #ffffff;
-            border-radius: 25px;
+            border-radius: 20px;
             border: 4px solid var(--primary-teal);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             position: relative;
             display: flex;
             flex-direction: column;
-            padding: 30px 40px;
+            padding: 20px 30px;
             justify-content: space-between;
         }
 
         .board-ad-header {
             position: absolute;
-            top: -28px;
+            top: -22px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--primary-teal);
             color: #ffffff;
-            padding: 8px 40px;
-            border-radius: 15px;
-            font-size: clamp(1.4rem, 2.5vw, 2.8rem);
+            padding: 6px 30px;
+            border-radius: 12px;
+            font-size: clamp(1.2rem, 2vw, 2.2rem);
             font-weight: 900;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             white-space: nowrap;
         }
 
         .board-lines-content {
-            margin-top: 40px;
+            margin-top: 25px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -344,12 +345,12 @@
 
         .board-line-item {
             border-bottom: 2px dashed #cbd5e1;
-            padding-bottom: 12px;
-            font-size: clamp(1.4rem, 2.3vw, 2.5rem);
+            padding-bottom: 8px;
+            font-size: clamp(1.2rem, 1.8vw, 2.2rem);
             font-weight: 800;
             color: #1e293b;
             text-align: right;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         /* فقرة التواصل */
@@ -360,13 +361,13 @@
                         url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            border-radius: 25px;
-            padding: 3vh 3vw;
+            border-radius: 20px;
+            padding: 2.5vh 2.5vw;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             border: 3px solid #2dd4bf;
         }
 
@@ -374,131 +375,153 @@
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             color: #ffffff;
-            padding: 10px 40px;
-            border-radius: 50px;
-            font-size: clamp(1.5rem, 2.5vw, 2.8rem);
+            padding: 8px 30px;
+            border-radius: 40px;
+            font-size: clamp(1.3rem, 2vw, 2.4rem);
             font-weight: 900;
             border: 2px solid rgba(255,255,255,0.3);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         .branches-horizontal-row {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
 
         .cinematic-branch-card {
             flex: 1;
-            background: rgba(255, 255, 255, 0.92);
-            border-radius: 20px;
-            padding: 20px;
+            min-width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            border-right: 6px solid var(--accent-orange);
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border-right: 5px solid var(--accent-orange);
         }
 
-        .cinematic-branch-icon { font-size: 2.5rem; }
-        .cinematic-branch-text { font-size: clamp(1.1rem, 1.6vw, 1.8rem); font-weight: 800; color: #0f172a; line-height: 1.3; }
+        .cinematic-branch-icon { font-size: 2rem; }
+        .cinematic-branch-text { font-size: clamp(1rem, 1.3vw, 1.5rem); font-weight: 800; color: #0f172a; line-height: 1.3; }
 
         .phone-typewriter-box {
             background: rgba(15, 23, 42, 0.9);
             border: 3px solid #2dd4bf;
-            border-radius: 25px;
+            border-radius: 20px;
             width: 90%;
-            padding: 2.5vh 2vw;
+            padding: 2vh 2vw;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .phone-label-head {
             color: #2dd4bf;
-            font-size: clamp(1.2rem, 2vw, 2.2rem);
+            font-size: clamp(1rem, 1.5vw, 1.8rem);
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .phone-typed-output {
             color: #ffffff;
-            font-size: clamp(2rem, 3.8vw, 4rem);
+            font-size: clamp(1.8rem, 3vw, 3.5rem);
             font-weight: 900;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             direction: ltr;
             text-shadow: 0 0 15px rgba(45, 212, 191, 0.6);
             min-height: 1.2em;
         }
 
+        /* 🔴 تعديل كارت QR Code الضماني للشاشات الكبيرة */
         .qr-connect-box {
             position: fixed;
-            top: 12vh;
-            left: 20px;
-            background: var(--panel-white);
-            padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 3px solid var(--border-color);
+            top: 11vh;
+            left: 25px;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 3px solid var(--primary-teal);
             text-align: center;
-            z-index: 100;
-            transition: all 0.5s ease;
+            z-index: 9999; /* لضمان الظهور فوق كل الطبقات */
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
-        .qr-connect-box.hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
-        .qr-connect-box p { font-size: 1rem; font-weight: 800; color: var(--primary-teal); margin-top: 8px; }
+        .qr-connect-box.hidden { 
+            opacity: 0; 
+            pointer-events: none; 
+            transform: scale(0.7) translateY(-20px); 
+        }
+        
+        .qr-connect-box p { 
+            font-size: clamp(0.75rem, 0.9vw, 1.1rem); 
+            font-weight: 800; 
+            color: var(--primary-teal); 
+            margin-top: 6px; 
+        }
 
         .qr-toggle-btn {
             position: fixed;
-            bottom: 11vh;
-            left: 10px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.08);
-            border: none;
+            bottom: 9vh;
+            left: 15px;
+            width: 38px;
+            height: 38px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid var(--border-color);
             border-radius: 50%;
             cursor: pointer;
-            z-index: 101;
+            z-index: 10000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
         }
 
-        /* Ticker المحاكي والتتّر الهادئ الأسفل */
+        /* Ticker السفلي المتجاوب */
         .footer-ticker {
             background: var(--panel-white);
-            height: 12vh;
-            min-height: 65px;
-            border-top: 5px solid var(--primary-teal);
+            height: 8vh;
+            min-height: 50px;
+            max-height: 70px;
+            border-top: 4px solid var(--primary-teal);
             display: flex;
             align-items: center;
             overflow: hidden;
             white-space: nowrap;
             position: relative;
-            padding: 0 25px;
+            padding: 0 20px;
+            flex-shrink: 0;
         }
 
         .ticker-typewriter-container {
             display: flex;
             align-items: center;
             width: 100%;
-            font-size: clamp(1.3rem, 2.2vw, 2.4rem);
+            font-size: clamp(1.1rem, 1.6vw, 2rem);
             font-weight: 900;
             color: var(--text-main);
         }
 
         .ticker-prefix {
             color: var(--accent-orange);
-            margin-left: 15px;
+            margin-left: 10px;
             white-space: nowrap;
         }
     </style>
 </head>
 <body>
 
-    <button class="qr-toggle-btn" onclick="toggleQR()" title="عرض / إخفاء QR Code"></button>
+    <!-- زر إظهار/إخفاء QR -->
+    <button class="qr-toggle-btn" onclick="toggleQR()" title="عرض / إخفاء QR Code">📱</button>
 
+    <!-- صندوق الـ QR Code ثابت ومضمون الظهور -->
     <div class="qr-connect-box" id="qrBox">
         <div id="qrcode"></div>
         <p>📱 امسح لربط الشاشة</p>
@@ -522,7 +545,7 @@
             </div>
         </div>
 
-        <!-- 1. جدول الأسعار المقسم بروقان وتدفق سلس -->
+        <!-- 1. جدول الأسعار المقسم -->
         <div class="stage-view full-screen-stage" id="stageTable">
             <div class="table-card">
                 <div class="table-header">
@@ -543,10 +566,10 @@
             <div class="featured-card" id="featuredCard" style="opacity: 0; transform: translateY(30px);"></div>
         </div>
 
-        <!-- 3. خدماتنا الشيك المصلحة بالكامل -->
+        <!-- 3. خدماتنا -->
         <div class="stage-view" id="stageServices">
-            <div style="width: 100%; height: 100%; background: rgba(255, 255, 255, 0.96); border-radius: 30px; padding: 4vh 3vw; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
-                <h2 style="font-size: clamp(1.8rem, 3vw, 3.2rem); color: var(--dark-teal); margin-bottom: 3vh; font-weight: 900;">✨ خدماتنا الرائدة والرعاية المتميزة ✨</h2>
+            <div style="width: 100%; height: 100%; background: rgba(255, 255, 255, 0.96); border-radius: 20px; padding: 3vh 2vw; display: flex; flex-direction: column; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.3);">
+                <h2 style="font-size: clamp(1.5rem, 2.5vw, 2.8rem); color: var(--dark-teal); margin-bottom: 2vh; font-weight: 900;">✨ خدماتنا الرائدة والرعاية المتميزة ✨</h2>
                 <div class="services-grid-chic" id="liveServicesGrid"></div>
             </div>
         </div>
@@ -573,7 +596,7 @@
 
     </div>
 
-    <!-- Ticker أسفل الشاشة المريح براحة تامة -->
+    <!-- Ticker أسفل الشاشة -->
     <div class="footer-ticker">
         <div class="ticker-typewriter-container">
             <span class="ticker-prefix">🔥 أسعار المنتجات المباشرة: </span>
@@ -612,10 +635,12 @@
         const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const scannerMobileUrl = window.location.protocol + "//" + window.location.host + currentPath + "/mobile-scanner.html?sid=" + tvSessionId;
         
+        // تعديل أبعاد الـ QR تلقائياً ليناسب مختلف الشاشات بوضوح
+        const qrSize = Math.min(Math.max(window.innerWidth * 0.08, 100), 160);
         new QRCode(document.getElementById("qrcode"), { 
             text: scannerMobileUrl, 
-            width: 120, 
-            height: 120,
+            width: qrSize, 
+            height: qrSize,
             correctLevel : QRCode.CorrectLevel.H
         });
 
@@ -690,7 +715,6 @@
             document.getElementById('pharmacyName').innerText = "🏥 " + name;
             document.getElementById('offlinePharmacyTitle').innerText = name;
 
-            // التأكد من استلام قائمة الخدمات أو استخدام القائمة الافتراضية
             if (typeof data.Services === 'string' && data.Services.trim() !== '') {
                 dataStore.Services = data.Services.split('--').map(s => s.trim()).filter(s => s.length > 0);
             } else if (!data.Services || data.Services.length === 0) {
@@ -702,7 +726,6 @@
             initTickerTypewriter();
         }
 
-        /* 🎨 إصلاح عرض شبكة الخدمات بالكامل لتظهر دائمًا بدون مشاكل */
         function renderServicesList() {
             const list = (dataStore.Services && dataStore.Services.length > 0) ? dataStore.Services : defaultServices;
             
@@ -717,7 +740,6 @@
             document.getElementById('liveServicesGrid').innerHTML = htmlCards;
         }
 
-        // ⌨️ التتر السفلي يعمل براحة وموثوقية
         function initTickerTypewriter() {
             if (!dataStore.Products || dataStore.Products.length === 0) return;
             if (typedTickerInstance) typedTickerInstance.destroy();
@@ -737,7 +759,6 @@
             });
         }
 
-        // 🔄 حلقة العرض الموزونة (الأسعار أسرع وسلسة - باقي الفقرات براحة جداً)
         let featuredIndex = 0;
 
         async function startSmartShowLoop() {
@@ -749,7 +770,7 @@
                 }
 
                 const allProducts = dataStore.Products || [];
-                const chunkSize = 20; // 20 صنف لكل فقرة بحد أقصى
+                const chunkSize = 20;
                 const productChunks = [];
                 
                 for (let i = 0; i < allProducts.length; i += chunkSize) {
@@ -758,42 +779,42 @@
 
                 if (productChunks.length === 0) productChunks.push([]);
 
-                // ------------------ 1. الفقرة الأولى من جدول الأسعار (سلسة وجميلة) ------------------
+                // 1. جدول الأسعار
                 renderTableChunk(productChunks[0] || []);
                 switchStage('stageTable');
                 await animateAndScrollTableCredits();
 
-                // ⬅️ فقرة براحة تامة: خدماتنا المتميزة
+                // خدماتنا
                 switchStage('stageServices');
-                await sleep(12000); // 12 ثانية كاملة ليتمكن الزبون من قراءتها براحة
+                await sleep(12000);
 
-                // ------------------ 2. الفقرة الثانية من جدول الأسعار (إن وجدت) ------------------
+                // 2. الفقرة الثانية من الأسعار
                 if (productChunks.length > 1) {
                     renderTableChunk(productChunks[1]);
                     switchStage('stageTable');
                     await animateAndScrollTableCredits();
                 }
 
-                // ⬅️ فقرة براحة تامة: محاكي البحث والمنتجات المميزة
+                // محاكي البحث والمنتجات المميزة
                 if (dataStore.FeaturedProducts.length > 0) {
                     switchStage('stageFeatured');
                     await playGoogleSearchAnimation();
-                    await sleep(11000); // 11 ثانية لمشاهدة المنتج
+                    await sleep(11000);
                 }
 
-                // ------------------ 3. الفقرة الثالثة من جدول الأسعار (إن وجدت) ------------------
+                // 3. الفقرة الثالثة من الأسعار
                 if (productChunks.length > 2) {
                     renderTableChunk(productChunks[2]);
                     switchStage('stageTable');
                     await animateAndScrollTableCredits();
                 }
 
-                // ⬅️ فقرة براحة تامة: العروض والتنويهات
+                // العروض والتنويهات
                 switchStage('stageOffers');
                 renderOffersBoard();
                 await sleep(12000);
 
-                // ⬅️ فقرة براحة تامة: التواصل وأرقام الفروع
+                // التواصل
                 switchStage('stageCinematicContact');
                 renderCinematicBranches();
                 await playTypewriterPhoneAnimation();
@@ -828,7 +849,6 @@
 
         function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-        // 🎬 حركة الأسعار السلسة والأنيقة (تمنع التقطيع وسريعة الاستجابة)
         function animateAndScrollTableCredits() {
             return new Promise((resolve) => {
                 const body = document.getElementById('tableBody');
@@ -844,21 +864,19 @@
                         return;
                     }
 
-                    // سرعة سلسة، بدون تهنيج ولا بطء قاتل
                     const duration = Math.max(5, (maxScroll / 55)); 
                     gsap.to(body, {
                         scrollTop: maxScroll,
                         duration: duration,
                         ease: "power1.inOut",
                         onComplete: () => {
-                            setTimeout(resolve, 2500); // وقوف هادئ في نهاية السكرول لمراجعة آخر القائمة
+                            setTimeout(resolve, 2500);
                         }
                     });
                 }, 1000);
             });
         }
 
-        // محاكي البحث
         function playGoogleSearchAnimation() {
             return new Promise((resolve) => {
                 const item = dataStore.FeaturedProducts[featuredIndex];

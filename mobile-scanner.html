@@ -114,7 +114,7 @@
 
     <div class="header">
         <h1>🩺 الاقتران بالشاشة الرئيسية</h1>
-        <p>وجه الكاميرا نحو كود الـ IP الخاص بالبرنامج</p>
+        <p>وجه الكاميرا نحو كود الـ QR الخاص بسيرفر البرنامج</p>
     </div>
 
     <div class="scanner-card">
@@ -124,89 +124,106 @@
         <div id="status" class="status">📷 جاري تشغيل الكاميرا...</div>
     </div>
 
-  <script>
-    const html5QrCode = new Html5Qrcode("reader");
+    <script>
+        // 🆔 استخراج رقم جلسة التلفزيون (sid) الممرر في رابط صفحة الموبايل
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetSid = urlParams.get('sid'); 
 
-    const config = {
-        fps: 30,
-        qrbox: function(viewfinderWidth, viewfinderHeight) {
-            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-            const edge = Math.floor(minEdge * 0.75);
-            return { width: edge, height: edge };
-        },
-        videoConstraints: {
-            facingMode: "environment",
-            focusMode: "continuous"
-        }
-    };
+        const html5QrCode = new Html5Qrcode("reader");
 
-    html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText) => {
-            html5QrCode.stop();
-
-            const statusEl = document.getElementById('status');
-            statusEl.innerText = "✅ تم التقاط كود الاقتران!";
-            statusEl.classList.add('success');
-
-            // 🎯 معالجة الكود المستخرج
-            handlePairingConnection(decodedText);
-        },
-        (errorMessage) => { /* معالجة صامتة أثناء المسح */ }
-    ).then(() => {
-        document.getElementById('status').innerText = "📷 وجه الكاميرا نحو كود الـ QR الخاص بالبرنامج";
-    }).catch((err) => {
-        console.error("تعذر تشغيل الكاميرا:", err);
-        const statusEl = document.getElementById('status');
-        statusEl.innerText = "⚠️ تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات.";
-        statusEl.classList.add('error');
-    });
-
-    function handlePairingConnection(scannedText) {
-        let wsUrl = "";
-
-        try {
-            // 1. إذا كان النص المقروء عبارة عن رابط كامل يحتوي على برامتر ws
-            if (scannedText.includes("ws=")) {
-                const urlParams = new URLSearchParams(scannedText.substring(scannedText.indexOf('?')));
-                wsUrl = urlParams.get('ws');
-            } 
-            // 2. إذا كان النص المقروء هو رابط WebSocket مباشر
-            else if (scannedText.startsWith("ws://") || scannedText.startsWith("wss://")) {
-                wsUrl = scannedText;
-            } 
-            // 3. fallback - لو النص عبارة عن IP عادي
-            else {
-                wsUrl = "ws://" + scannedText;
+        const config = {
+            fps: 30,
+            qrbox: function(viewfinderWidth, viewfinderHeight) {
+                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                const edge = Math.floor(minEdge * 0.75);
+                return { width: edge, height: edge };
+            },
+            videoConstraints: {
+                facingMode: "environment",
+                focusMode: "continuous"
             }
+        };
 
-            console.log("رابط WebSocket المستخرج:", wsUrl);
+        html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            (decodedText) => {
+                html5QrCode.stop();
 
-            // 🅰️ إذا كانت الشاشة الرئيسية (التلفزيون) هي التي فتحت نافذة الموبايل (نافذة منبثقة)
-            if (window.opener) {
-                window.opener.postMessage({ 
-                    type: "CONNECT_WS", 
-                    url: wsUrl 
-                }, "*");
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = "⚡ جاري ربط التلفزيون بالسيرفر...";
+                statusEl.className = "status";
 
-                document.getElementById('status').innerText = "🟢 تم إرسال رابط الاتصال لشاشة التلفزيون!";
-                setTimeout(() => window.close(), 1500);
-            } 
-            // 🅱️ إذا تم فتح الماسح على الموبايل بشكل مستقل (عبر متصفح الموبايل)
-            else {
-                // يعيد توجيه الموبايل لنفس صفحة الشاشة الرئيسية مع تمرير عنوان الـ WebSocket
-                const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-                window.location.href = baseUrl + "/index.html?ws=" + encodeURIComponent(wsUrl);
-            }
-
-        } catch (e) {
-            console.error("خطأ في معالجة الرابط:", e);
+                // 🎯 معالجة الكود وإرساله للشاشة عبر Relay
+                handlePairingConnection(decodedText);
+            },
+            (errorMessage) => { /* معالجة صامتة أثناء المسح */ }
+        ).then(() => {
+            document.getElementById('status').innerText = "📷 وجه الكاميرا نحو كود الـ QR الخاص بسيرفر البرنامج";
+        }).catch((err) => {
+            console.error("تعذر تشغيل الكاميرا:", err);
             const statusEl = document.getElementById('status');
-            statusEl.innerText = "❌ الكود الممسوح غير صالح للاقتران.";
-            statusEl.classList.add('error');
+            statusEl.innerText = "⚠️ تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات.";
+            statusEl.className = "status error";
+        });
+
+        function handlePairingConnection(scannedText) {
+            let wsUrl = "";
+
+            try {
+                // 1. استخراج رابط الـ WebSocket من الكود الممسوح
+                if (scannedText.includes("ws=")) {
+                    const params = new URLSearchParams(scannedText.substring(scannedText.indexOf('?')));
+                    wsUrl = params.get('ws');
+                } 
+                else if (scannedText.startsWith("ws://") || scannedText.startsWith("wss://")) {
+                    wsUrl = scannedText;
+                } 
+                else {
+                    wsUrl = "ws://" + scannedText;
+                }
+
+                console.log("رابط السيرفر المستخرج:", wsUrl);
+                const statusEl = document.getElementById('status');
+
+                // 📡 إذا كان لدينا رقم جلسة التلفزيون (targetSid)، نرسل الإشارة عبر PieSocket Relay
+                if (targetSid) {
+                    const relayWs = new WebSocket("wss://free.piehost.com/v3/channel_relay?api_key=o83A7S2J8E9k&notify_self=0");
+
+                    relayWs.onopen = () => {
+                        // إرسال البيانات الموجهة لشاشة التلفزيون المحددة
+                        relayWs.send(JSON.stringify({
+                            targetSid: targetSid,
+                            wsUrl: wsUrl
+                        }));
+
+                        statusEl.innerText = "🟢 تم التوصيل! تم إرسال البيانات لشاشة التلفزيون بنجاح.";
+                        statusEl.className = "status success";
+
+                        setTimeout(() => {
+                            relayWs.close();
+                        }, 2000);
+                    };
+
+                    relayWs.onerror = (err) => {
+                        console.error("Relay Connection Error:", err);
+                        statusEl.innerText = "❌ تعذر الاتصال بخادم الإشارات، يرجى المحاولة مجدداً.";
+                        statusEl.className = "status error";
+                    };
+
+                } else {
+                    // 🅰️ Fallback: في حال تم مسح الموبايل مباشرة دون التمرير عبر QR التلفزيون
+                    const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+                    window.location.href = baseUrl + "/index.html?ws=" + encodeURIComponent(wsUrl);
+                }
+
+            } catch (e) {
+                console.error("خطأ في معالجة الكود:", e);
+                const statusEl = document.getElementById('status');
+                statusEl.innerText = "❌ الكود الممسوح غير صالح للاقتران.";
+                statusEl.className = "status error";
+            }
         }
-    }
-</script>
+    </script>
 </body>
 </html>

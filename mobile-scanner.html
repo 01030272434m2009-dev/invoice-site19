@@ -124,100 +124,89 @@
         <div id="status" class="status">📷 جاري تشغيل الكاميرا...</div>
     </div>
 
-    <script>
-        const html5QrCode = new Html5Qrcode("reader");
+  <script>
+    const html5QrCode = new Html5Qrcode("reader");
 
-        const config = {
-            fps: 30,
-            qrbox: function(viewfinderWidth, viewfinderHeight) {
-                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                const edge = Math.floor(minEdge * 0.75);
-                return { width: edge, height: edge };
-            },
-            videoConstraints: {
-                facingMode: "environment",
-                focusMode: "continuous",
-                width: { min: 640, ideal: 1280, max: 1920 },
-                height: { min: 480, ideal: 720, max: 1080 }
-            }
-        };
+    const config = {
+        fps: 30,
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+            const edge = Math.floor(minEdge * 0.75);
+            return { width: edge, height: edge };
+        },
+        videoConstraints: {
+            facingMode: "environment",
+            focusMode: "continuous"
+        }
+    };
 
-        html5QrCode.start(
-            { facingMode: "environment" },
-            config,
-            (decodedText) => {
-                // إيقاف الماسح بعد القراءة الناجحة
-                html5QrCode.stop();
+    html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+            html5QrCode.stop();
 
-                const statusEl = document.getElementById('status');
-                statusEl.innerText = "✅ تم التقاط رابط الاقتران!";
-                statusEl.classList.add('success');
-
-                // معالجة رابط الـ IP/WebSocket وإرساله لفتح الاتصال
-                handlePairingConnection(decodedText);
-            },
-            (errorMessage) => {
-                // معالجة صامتة أثناء البحث
-            }
-        ).then(() => {
-            document.getElementById('status').innerText = "📷 وجه الكاميرا نحو كود الـ QR الخاص بالبرنامج";
-        }).catch((err) => {
-            console.error("تعذر تشغيل الكاميرا:", err);
             const statusEl = document.getElementById('status');
-            statusEl.innerText = "⚠️ تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات.";
-            statusEl.classList.add('error');
-        });
+            statusEl.innerText = "✅ تم التقاط كود الاقتران!";
+            statusEl.classList.add('success');
 
-        // دالة التعامل مع كود الاقتران المسموح
-        function handlePairingConnection(connectionString) {
-            console.log("بيانات الاقتران المستلمة:", connectionString);
+            // 🎯 معالجة الكود المستخرج
+            handlePairingConnection(decodedText);
+        },
+        (errorMessage) => { /* معالجة صامتة أثناء المسح */ }
+    ).then(() => {
+        document.getElementById('status').innerText = "📷 وجه الكاميرا نحو كود الـ QR الخاص بالبرنامج";
+    }).catch((err) => {
+        console.error("تعذر تشغيل الكاميرا:", err);
+        const statusEl = document.getElementById('status');
+        statusEl.innerText = "⚠️ تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات.";
+        statusEl.classList.add('error');
+    });
 
-            // 1. إذا كانت الصفحة مفتوحة من داخل WebBrowser/WebView في البرنامج الرئيسي
+    function handlePairingConnection(scannedText) {
+        let wsUrl = "";
+
+        try {
+            // 1. إذا كان النص المقروء عبارة عن رابط كامل يحتوي على برامتر ws
+            if (scannedText.includes("ws=")) {
+                const urlParams = new URLSearchParams(scannedText.substring(scannedText.indexOf('?')));
+                wsUrl = urlParams.get('ws');
+            } 
+            // 2. إذا كان النص المقروء هو رابط WebSocket مباشر
+            else if (scannedText.startsWith("ws://") || scannedText.startsWith("wss://")) {
+                wsUrl = scannedText;
+            } 
+            // 3. fallback - لو النص عبارة عن IP عادي
+            else {
+                wsUrl = "ws://" + scannedText;
+            }
+
+            console.log("رابط WebSocket المستخرج:", wsUrl);
+
+            // 🅰️ إذا كانت الشاشة الرئيسية (التلفزيون) هي التي فتحت نافذة الموبايل (نافذة منبثقة)
             if (window.opener) {
                 window.opener.postMessage({ 
-                    type: "CONNECT_IP", 
-                    payload: connectionString 
+                    type: "CONNECT_WS", 
+                    url: wsUrl 
                 }, "*");
 
-                setTimeout(() => window.close(), 1000);
+                document.getElementById('status').innerText = "🟢 تم إرسال رابط الاتصال لشاشة التلفزيون!";
+                setTimeout(() => window.close(), 1500);
             } 
-            // 2. إذا تم فتح الاتصال مباشرة عبر WebSocket من داخل الموبايل
-            else if (connectionString.startsWith("ws://") || connectionString.startsWith("wss://")) {
-                connectWebSocketDirectly(connectionString);
-            } 
-            // 3. إذا كان الرابط IP عالي (HTTP/HTTPS)
-            else if (connectionString.startsWith("http://") || connectionString.startsWith("https://")) {
-                window.location.href = connectionString;
-            } 
-            // 4. نص/توكن اقتران خام
+            // 🅱️ إذا تم فتح الماسح على الموبايل بشكل مستقل (عبر متصفح الموبايل)
             else {
-                alert("تم استلام كود الاقتران:\n" + connectionString);
+                // يعيد توجيه الموبايل لنفس صفحة الشاشة الرئيسية مع تمرير عنوان الـ WebSocket
+                const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+                window.location.href = baseUrl + "/index.html?ws=" + encodeURIComponent(wsUrl);
             }
-        }
 
-        // دالة اختيارية للربط المباشر بـ WebSocket إن كان الرابط يبدأ بـ ws://
-        function connectWebSocketDirectly(wsUrl) {
+        } catch (e) {
+            console.error("خطأ في معالجة الرابط:", e);
             const statusEl = document.getElementById('status');
-            statusEl.innerText = "🔄 جاري إقامة اتصال مباشر بـ WebSocket...";
-            
-            try {
-                const socket = new WebSocket(wsUrl);
-
-                socket.onopen = () => {
-                    statusEl.innerText = "🟢 تم الاقتران والاتصال بالسيرفر بنجاح!";
-                    socket.send(JSON.stringify({ event: "PAIRED", client: "MobileScanner" }));
-                };
-
-                socket.onerror = (error) => {
-                    statusEl.innerText = "❌ فشل الاتصال برابط الـ IP الممسوح.";
-                    statusEl.classList.remove('success');
-                    statusEl.classList.add('error');
-                };
-            } catch (e) {
-                statusEl.innerText = "⚠️ صيغة رابط الاتصال غير مدعومة.";
-                statusEl.classList.add('error');
-            }
+            statusEl.innerText = "❌ الكود الممسوح غير صالح للاقتران.";
+            statusEl.classList.add('error');
         }
-    </script>
+    }
+</script>
 </body>
 </html>

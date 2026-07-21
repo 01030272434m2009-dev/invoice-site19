@@ -321,7 +321,7 @@
                     </div>
                     <div class="service-card">
                         <span class="service-icon">🧪</span>
-                        <div class="service-name"> لقاحات معتمدة</div>
+                        <div class="service-name">لقاحات معتمدة</div>
                     </div>
                     <div class="service-card">
                         <span class="service-icon">🛡️</span>
@@ -400,8 +400,7 @@
             TickerText: "مرحباً بكم في صيدليتنا البيطرية.."
         };
 
-        // 🔧 إصلاح رابط الـ QR Code لفتح المسار الصحيح للموبايل
-        // إذا كنت تستخدم مسار ماسح الموبايل في نفس المجلد:
+        // 🔧 رابط الـ QR Code الموجه إلى ماسح الموبايل
         const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const scannerMobileUrl = window.location.protocol + "//" + window.location.host + currentPath + "/mobile-scanner.html";
         
@@ -412,14 +411,29 @@
             correctLevel : QRCode.CorrectLevel.H
         });
 
+        // 1️⃣ الاستماع للرسائل القادمة من نافذة الموبايل المنبثقة
         window.addEventListener("message", (event) => {
             if (event.data && event.data.type === "CONNECT_WS") {
                 connectToServer(event.data.url);
             }
         });
 
+        // 2️⃣ ✨ الميزة الجديدة: الفحص التلقائي لبرامتر الـ URL عند فتح الصفحة مباشر من الموبايل
+        window.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const wsFromUrl = urlParams.get('ws');
+            if (wsFromUrl) {
+                console.log("تم اكتشاف رابط WebSocket في عنوان الصفحة:", wsFromUrl);
+                connectToServer(wsFromUrl);
+            }
+        });
+
         function connectToServer(wsUrl) {
             try {
+                if (ws) {
+                    ws.close();
+                }
+
                 ws = new WebSocket(wsUrl);
                 ws.onopen = () => {
                     isConnected = true;

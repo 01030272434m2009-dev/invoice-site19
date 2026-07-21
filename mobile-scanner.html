@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>📱 ماسح الاتصال بالشاشة البيطرية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة قراءة QR -->
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- مكتبة PeerJS للربط المباشر اللحظي (بديل PieSocket) -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
     <style>
         :root {
             --bg-light: #f4fbfb;
@@ -125,7 +129,7 @@
     </div>
 
     <script>
-        // 🆔 استخراج رقم جلسة التلفزيون (sid) الممرر في رابط صفحة الموبايل
+        // 🆔 استخراج رقم جلسة التلفزيون (sid) الممرر في رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
         const targetSid = urlParams.get('sid'); 
 
@@ -151,10 +155,10 @@
                 html5QrCode.stop();
 
                 const statusEl = document.getElementById('status');
-                statusEl.innerText = "⚡ جاري ربط التلفزيون بالسيرفر...";
+                statusEl.innerText = "⚡ جاري إرسال بيانات الاتصال للشاشة...";
                 statusEl.className = "status";
 
-                // 🎯 معالجة الكود وإرساله للشاشة عبر Relay
+                // 🎯 معالجة الكود وإرساله للشاشة
                 handlePairingConnection(decodedText);
             },
             (errorMessage) => { /* معالجة صامتة أثناء المسح */ }
@@ -186,33 +190,44 @@
                 console.log("رابط السيرفر المستخرج:", wsUrl);
                 const statusEl = document.getElementById('status');
 
-                // 📡 إذا كان لدينا رقم جلسة التلفزيون (targetSid)، نرسل الإشارة عبر PieSocket Relay
+                // 📡 2. استخدام PeerJS لإرسال البيانات مباشرة لشاشة التلفزيون
                 if (targetSid) {
-                    const relayWs = new WebSocket("wss://free.piehost.com/v3/channel_relay?api_key=o83A7S2J8E9k&notify_self=0");
+                    const peer = new Peer();
 
-                    relayWs.onopen = () => {
-                        // إرسال البيانات الموجهة لشاشة التلفزيون المحددة
-                        relayWs.send(JSON.stringify({
-                            targetSid: targetSid,
-                            wsUrl: wsUrl
-                        }));
+                    peer.on('open', (id) => {
+                        console.log("تم إنشاء عقدة Peer للموبايل:", id);
+                        
+                        // الاتصال برقم شاشة التلفزيون المحددة
+                        const conn = peer.connect(targetSid);
 
-                        statusEl.innerText = "🟢 تم التوصيل! تم إرسال البيانات لشاشة التلفزيون بنجاح.";
-                        statusEl.className = "status success";
+                        conn.on('open', () => {
+                            // إرسال رابط السيرفر للتلفزيون
+                            conn.send({ wsUrl: wsUrl });
 
-                        setTimeout(() => {
-                            relayWs.close();
-                        }, 2000);
-                    };
+                            statusEl.innerText = "🟢 تم التوصيل! تم إرسال البيانات لشاشة التلفزيون بنجاح.";
+                            statusEl.className = "status success";
 
-                    relayWs.onerror = (err) => {
-                        console.error("Relay Connection Error:", err);
-                        statusEl.innerText = "❌ تعذر الاتصال بخادم الإشارات، يرجى المحاولة مجدداً.";
+                            setTimeout(() => {
+                                conn.close();
+                                peer.destroy();
+                            }, 2000);
+                        });
+
+                        conn.on('error', (err) => {
+                            console.error("Peer Connection Error:", err);
+                            statusEl.innerText = "❌ تعذر الاتصال بالشاشة، يرجى إعادة المحاولة.";
+                            statusEl.className = "status error";
+                        });
+                    });
+
+                    peer.on('error', (err) => {
+                        console.error("PeerJS Client Error:", err);
+                        statusEl.innerText = "❌ خطأ في الاتصال، تأكد من اتصالك بالإنترنت.";
                         statusEl.className = "status error";
-                    };
+                    });
 
                 } else {
-                    // 🅰️ Fallback: في حال تم مسح الموبايل مباشرة دون التمرير عبر QR التلفزيون
+                    // Fallback: فتح الصفحة مباشرة إذا لم تكن ممسوحة من كود التلفزيون
                     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
                     window.location.href = baseUrl + "/index.html?ws=" + encodeURIComponent(wsUrl);
                 }

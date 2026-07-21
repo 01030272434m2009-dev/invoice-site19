@@ -8,13 +8,22 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         :root {
-            --bg-light: #f0fdfa;
+            --bg-light: #f4fbfb;
             --primary-teal: #0d9488;
             --dark-teal: #0f766e;
             --accent-mint: #14b8a6;
             --text-dark: #0f172a;
+            --success-bg: #dcfce7;
+            --success-text: #15803d;
         }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Cairo', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+        }
+
         body { 
             background: var(--bg-light); 
             color: var(--text-dark); 
@@ -25,29 +34,74 @@
             min-height: 100vh; 
             padding: 20px; 
         }
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { font-size: 1.7rem; color: var(--dark-teal); font-weight: 800; margin-bottom: 5px; }
-        .header p { font-size: 1rem; color: #475569; font-weight: 600; }
+
+        .header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+
+        .header h1 { 
+            font-size: 1.6rem; 
+            color: var(--dark-teal); 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+        }
+
+        .header p { 
+            font-size: 0.95rem; 
+            color: #64748b; 
+            font-weight: 600; 
+        }
         
         .scanner-card {
             background: #ffffff;
             width: 100%;
-            max-width: 400px;
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(13, 148, 136, 0.15);
-            border: 2px solid #ccfbf1;
+            max-width: 420px;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(13, 148, 136, 0.12);
+            border: 1px solid #ccfbf1;
             text-align: center;
         }
-        #reader { width: 100%; border-radius: 16px; overflow: hidden; border: 3px dashed var(--primary-teal); }
+
+        /* حاوية الفيديو والتركيز */
+        .reader-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #reader { 
+            width: 100%; 
+            border: none !important;
+        }
+
+        /* إخفاء إعلانات المكتبة واقتراحات الكاميرا المدمجة */
+        #reader img[alt="Info icon"], #reader span {
+            display: none !important;
+        }
+
+        /* حالة الاتصال */
         .status { 
-            margin-top: 20px; 
-            font-weight: 800; 
-            font-size: 1.1rem;
+            margin-top: 18px; 
+            font-weight: 700; 
+            font-size: 1rem;
             color: var(--primary-teal); 
             background: #ccfbf1;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status.success {
+            background: var(--success-bg);
+            color: var(--success-text);
         }
     </style>
 </head>
@@ -55,35 +109,62 @@
 
     <div class="header">
         <h1>🩺 الربط السريع بالشاشة الكبيرة</h1>
-        <p>وجه كاميرا الموبايل نحو كود QR السيرفر للربط المباشر</p>
+        <p>وجه كاميرا الموبايل نحو كود QR للربط المباشر</p>
     </div>
 
     <div class="scanner-card">
-        <div id="reader"></div>
-        <div id="status" class="status">📷 الكاميرا جاهزة للمسح...</div>
+        <div class="reader-wrapper">
+            <div id="reader"></div>
+        </div>
+        <div id="status" class="status">📷 جاري تشغيل الكاميرا...</div>
     </div>
 
     <script>
         const html5QrCode = new Html5Qrcode("reader");
+
+        // إعدادات عالية السرعة والدقة
+        const config = {
+            fps: 30, // تسريع قراءة الفريمات إلى 30 لقطة/ثانية
+            qrbox: function(viewfinderWidth, viewfinderHeight) {
+                // ضبط الحجم تلقائياً بحسب حجم الشاشة
+                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                const edge = Math.floor(minEdge * 0.75);
+                return { width: edge, height: edge };
+            },
+            videoConstraints: {
+                facingMode: "environment", // الكاميرا الخلفية
+                focusMode: "continuous",   // تركيز تلقائي مستمر
+                width: { min: 640, ideal: 1280, max: 1920 },
+                height: { min: 480, ideal: 720, max: 1080 }
+            }
+        };
+
         html5QrCode.start(
             { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 230, height: 230 } },
+            config,
             (decodedText) => {
+                // عند القراءة بنجاح
                 html5QrCode.stop();
                 const statusEl = document.getElementById('status');
                 statusEl.innerText = "✅ تم الاقتران بنجاح! جاري الاتصال...";
-                statusEl.style.background = "#dcfce7";
-                statusEl.style.color = "#15803d";
+                statusEl.classList.add('success');
                 
                 if (window.opener) {
                     window.opener.postMessage({ type: "CONNECT_WS", url: decodedText }, "*");
                     setTimeout(() => window.close(), 1200);
                 } else {
-                    alert("تم قراءة رابط السيرفر بنجاح: " + decodedText);
+                    alert("تم قراءة رابط السيرفر بنجاح:\n" + decodedText);
                 }
             },
-            (errorMessage) => {}
-        );
+            (errorMessage) => {
+                // معالجة صامتة لعدم وجود كود في الإطار الحالي
+            }
+        ).then(() => {
+            document.getElementById('status').innerText = "📷 وجّه الكاميرا نحو كود الـ QR";
+        }).catch((err) => {
+            console.error("تعذر تشغيل الكاميرا:", err);
+            document.getElementById('status').innerText = "⚠️ تعذر الوصول للكاميرا، يرجي السماح للصلاحيات.";
+        });
     </script>
 </body>
 </html>

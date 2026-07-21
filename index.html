@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 شاشة العروض والبث البيطري الذكية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- مكتبة QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- مكتبة PeerJS للربط اللحظي المباشر والسريع (بديل PieSocket) -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
     <style>
         :root {
             --bg-main: #f0fdfa;
@@ -80,7 +84,7 @@
             display: flex;
         }
 
-        /* 🔴 شاشة الانفصال (Offline Dashboard) */
+        /* شاشة الانفصال (Offline Dashboard) */
         .offline-hero {
             text-align: center;
             width: 100%;
@@ -400,10 +404,10 @@
             TickerText: "مرحباً بكم في صيدليتنا البيطرية.."
         };
 
-        // 🆔 1. توليد رقم جلسة عشوائي ومميز لشاشة التلفزيون
-        const tvSessionId = "TV_" + Math.floor(100000 + Math.random() * 900000);
+        // 🆔 1. توليد رقم كود فريد ورقمي بسيط لشاشة التلفزيون
+        const tvSessionId = "tv-" + Math.floor(100000 + Math.random() * 900000);
 
-        // 🔧 رابط الـ QR Code الموجه إلى ماسح الموبايل محملاً بمعرف الجلسة sid
+        // 🔧 تجهيز رابط QR للموبايل شاملاً معرّف الشاشة الـ ID
         const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
         const scannerMobileUrl = window.location.protocol + "//" + window.location.host + currentPath + "/mobile-scanner.html?sid=" + tvSessionId;
         
@@ -414,36 +418,34 @@
             correctLevel : QRCode.CorrectLevel.H
         });
 
-        // 📡 2. الربط عبر سيرفر إشارات مجاني (PieSocket / Relay WebSocket) لاستقبال البيانات من الموبايل
-        function initRelayListener() {
-            try {
-                // خادم إشارات مجاني عام للربط اللحظي بين الأجهزة المختلفة
-                const relayWs = new WebSocket("wss://free.piehost.com/v3/channel_relay?api_key=o83A7S2J8E9k&notify_self=0");
+        // 📡 2. استخدام PeerJS للربط المباشر مع الموبايل (سريع ومجاني ورسمي)
+        function initPeerListener() {
+            // إنشاء عقدة Peer للتلفزيون بالـ ID الفريد الخاص به
+            const peer = new Peer(tvSessionId);
+
+            peer.on('open', (id) => {
+                console.log("تم تشغيل خادم التلفزيون بالمعرف:", id);
+            });
+
+            // عند استلام اتصال من كود الموبايل
+            peer.on('connection', (conn) => {
+                console.log("تم الاتصال بالموبايل بنجاح!");
                 
-                relayWs.onopen = () => {
-                    console.log("تم الاشتراك في قناة الإشارات الخاصة بالتلفزيون:", tvSessionId);
-                };
+                conn.on('data', (data) => {
+                    console.log("تم استقبال بيانات من الموبايل:", data);
+                    // إذا أرسل الموبايل رابط الـ WebSocket للأنظمة الداخلية
+                    if (data && data.wsUrl) {
+                        connectToServer(data.wsUrl);
+                    }
+                });
+            });
 
-                relayWs.onmessage = (event) => {
-                    try {
-                        const msg = JSON.parse(event.data);
-                        // إذا كانت الرسالة موجهة لهذه الشاشة وبها رابط سيرفر الـ WebSocket
-                        if (msg.targetSid === tvSessionId && msg.wsUrl) {
-                            console.log("تم استقبال رابط السيرفر من الموبايل:", msg.wsUrl);
-                            connectToServer(msg.wsUrl);
-                        }
-                    } catch(e) {}
-                };
-
-                relayWs.onerror = () => {
-                    // إعادة المحاولة في حالة انقطاع شبكة الإشارات
-                    setTimeout(initRelayListener, 3000);
-                };
-            } catch (e) {
-                console.error("Relay connection error", e);
-            }
+            peer.on('error', (err) => {
+                console.error("PeerJS Error:", err);
+            });
         }
-        initRelayListener();
+        
+        initPeerListener();
 
         // 3️⃣ الفحص التلقائي لبرامتر الـ URL (في حال تم الدخول بالرابط المباشر)
         window.addEventListener("DOMContentLoaded", () => {

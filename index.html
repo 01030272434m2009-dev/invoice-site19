@@ -13,7 +13,7 @@
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <!-- مكتبة GSAP للأنيميشن السينمائي -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- مكتبة Typed.js لمحاكاة كتابة محرك البحث -->
+    <!-- مكتبة Typed.js لمحاكاة كتابة محرك البحث وأرقام الهاتف -->
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
 
     <style>
@@ -28,7 +28,6 @@
             --text-muted: #475569;
             --border-color: #99f6e4;
             --gold: #d97706;
-            --glow-teal: rgba(13, 148, 136, 0.4);
         }
 
         * {
@@ -118,7 +117,7 @@
             transform: scale(1);
         }
 
-        /* شاشة جدول الأسعار (ملء الشاشة بالكامل) */
+        /* شاشة جدول الأسعار ملء الشاشة بالكامل */
         .stage-view.full-screen-stage {
             width: 100% !important;
             height: 100% !important;
@@ -177,7 +176,7 @@
         .service-icon { font-size: clamp(2.5rem, 3.5vw, 3.8rem); margin-bottom: 1vh; }
         .service-name { font-size: clamp(1.2rem, 1.6vw, 1.6rem); font-weight: 800; color: var(--dark-teal); }
 
-        /* جدول الأسعار ملء الشاشة المتجاوب */
+        /* 🎬 جدول الأسعار التفاعلي كـ (تتر نهاية المسلسل) */
         .table-card {
             background: var(--panel-white);
             border-radius: 20px;
@@ -193,26 +192,28 @@
         .table-header {
             background: linear-gradient(90deg, var(--primary-teal), var(--dark-teal));
             color: white;
-            padding: 2vh 2vw;
+            padding: 2.2vh 2vw;
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            font-size: clamp(1.3rem, 2vw, 2.2rem);
+            font-size: clamp(1.4rem, 2.2vw, 2.4rem);
             font-weight: 900;
             text-align: center;
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .table-body {
             flex: 1;
-            overflow-y: hidden; /* الحركة تدار بالبرمجة آلياً وبنعومة */
-            scroll-behavior: smooth;
+            overflow-y: hidden;
+            scroll-behavior: auto; /* الاعتماد التام على سلاسة GSAP السينمائية */
         }
 
         .table-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            padding: 2.2vh 2vw;
+            padding: 2.5vh 2vw;
             border-bottom: 2px solid #e2e8f0;
-            font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+            font-size: clamp(1.3rem, 2vw, 2rem);
             font-weight: 800;
             text-align: center;
             align-items: center;
@@ -222,7 +223,7 @@
         .price-retail { color: var(--primary-teal); font-weight: 900; }
         .price-wholesale { color: var(--accent-orange); font-weight: 900; }
 
-        /* محاكي شريط بحث جوجل للجزء المميز */
+        /* محاكي شريط بحث جوجل */
         .google-search-box {
             background: #ffffff;
             border-radius: 50px;
@@ -333,80 +334,91 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* 📍 شاشة العناوين والفروع (مستقلة وشيك جداً) */
+        /* 🎨 فقرة التواصل السينمائية (العناوين جانباً إلى جانب + الهواتف بالتكتكة) */
         /* ------------------------------------------------------------- */
-        .branches-stage-container {
-            width: 90%;
-            height: 90%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .section-title-badge {
-            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
-            color: white;
-            padding: 12px 35px;
-            border-radius: 30px;
-            font-size: clamp(1.6rem, 2.8vw, 3rem);
-            font-weight: 900;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.4);
-        }
-
-        .branches-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+        .cinematic-contact-stage {
             width: 100%;
-        }
-
-        .branch-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 25px 30px;
-            border-right: 8px solid var(--primary-teal);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .branch-icon { font-size: 3rem; }
-        .branch-info-text { font-size: clamp(1.2rem, 2vw, 2.2rem); font-weight: 800; color: #0f172a; line-height: 1.4; }
-
-        /* ------------------------------------------------------------- */
-        /* 📞 شاشة أرقام التواصل والتليفون (مستقلة وشيك جداً) */
-        /* ------------------------------------------------------------- */
-        .contacts-stage-container {
-            width: 90%;
-            height: 90%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .contacts-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 85%;
-            max-width: 900px;
-        }
-
-        .contact-card {
-            background: linear-gradient(135deg, #ffffff, #f0fdfa);
-            border: 3px solid var(--border-color);
+            height: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(13, 148, 136, 0.85)),
+                        url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
             border-radius: 25px;
-            padding: 20px 40px;
+            padding: 3vh 3vw;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            align-items: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border: 3px solid #2dd4bf;
         }
 
-        .contact-label { font-size: clamp(1.3rem, 2vw, 2.2rem); font-weight: 800; color: var(--dark-teal); }
-        .contact-number { font-size: clamp(1.8rem, 3vw, 3.2rem); font-weight: 900; color: var(--accent-orange); letter-spacing: 2px; direction: ltr; }
+        .cinematic-title-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+            padding: 10px 40px;
+            border-radius: 50px;
+            font-size: clamp(1.5rem, 2.5vw, 2.8rem);
+            font-weight: 900;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* العناوين مرصوفة جنبًا إلى جنب */
+        .branches-horizontal-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+
+        .cinematic-branch-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            border-right: 6px solid var(--accent-orange);
+        }
+
+        .cinematic-branch-icon { font-size: 2.5rem; }
+        .cinematic-branch-text { font-size: clamp(1.1rem, 1.6vw, 1.8rem); font-weight: 800; color: #0f172a; line-height: 1.3; }
+
+        /* صندوق أرقام الهواتف بالتكتكة */
+        .phone-typewriter-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 3px solid #2dd4bf;
+            border-radius: 25px;
+            width: 90%;
+            padding: 2.5vh 2vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .phone-label-head {
+            color: #2dd4bf;
+            font-size: clamp(1.2rem, 2vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .phone-typed-output {
+            color: #ffffff;
+            font-size: clamp(2rem, 3.8vw, 4rem);
+            font-weight: 900;
+            letter-spacing: 4px;
+            direction: ltr;
+            text-shadow: 0 0 15px rgba(45, 212, 191, 0.6);
+            min-height: 1.2em;
+        }
 
         /* نافذة QR والزر الخفي */
         .qr-connect-box {
@@ -490,7 +502,7 @@
             </div>
         </div>
 
-        <!-- 1. الدليل الموحد لأسعار المستحضرات (ملء الشاشة بالكامل) -->
+        <!-- 1. الدليل الموحد لأسعار المستحضرات (تتر مسلسل مريح وسلس جدًا) -->
         <div class="stage-view full-screen-stage" id="stageTable">
             <div class="table-card">
                 <div class="table-header">
@@ -527,19 +539,19 @@
             </div>
         </div>
 
-        <!-- 5. فقرة العناوين والفروع (مستقلة) -->
-        <div class="stage-view" id="stageBranches">
-            <div class="branches-stage-container">
-                <div class="section-title-badge">📍 عناويننا وفروع الخدمة</div>
-                <div class="branches-grid" id="branchesGrid"></div>
-            </div>
-        </div>
+        <!-- 5. الفقرة السينمائية الأخيرة (العناوين بجانب بعضها + كتابة الأرقام بالتكتكة) -->
+        <div class="stage-view" id="stageCinematicContact">
+            <div class="cinematic-contact-stage">
+                <div class="cinematic-title-badge">📍 عناوين الفروع والتواصل السريع 📞</div>
+                
+                <!-- العناوين جنبًا إلى جنب -->
+                <div class="branches-horizontal-row" id="cinematicBranchesRow"></div>
 
-        <!-- 6. فقرة أرقام التليفون والتواصل (مستقلة) -->
-        <div class="stage-view" id="stageContacts">
-            <div class="contacts-stage-container">
-                <div class="section-title-badge" style="background: linear-gradient(135deg, var(--accent-orange), #c2410c);">📞 أرقام التواصل والخدمة السريعة</div>
-                <div class="contacts-list" id="contactsList"></div>
+                <!-- الهواتف بالتكتكة والكتابة حرف بحرف -->
+                <div class="phone-typewriter-box">
+                    <div class="phone-label-head">📞 أرقام التواصل والطلب المباشر:</div>
+                    <div class="phone-typed-output"><span id="typedPhone"></span></div>
+                </div>
             </div>
         </div>
 
@@ -553,7 +565,24 @@
     <script>
         let ws = null;
         let isConnected = false;
-        let typedInstance = null;
+        let typedSearchInstance = null;
+        let typedPhoneInstance = null;
+
+        // محاكاة صوت الكيبورد إلكترونياً (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClickSound() {
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(1200 + Math.random() * 400, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
 
         const serviceIcons = ['🩺', '💊', '🧪', '💉', '🔬', '🚑', '🥩', '🌾', '🛡️', '📊'];
 
@@ -609,7 +638,7 @@
             }
             
             renderOfflineServices();
-            startSmartShowLoop(); // بدء حلقة العرض التلقائية الذكية
+            startSmartShowLoop();
         });
 
         function connectToServer(wsUrl) {
@@ -650,7 +679,6 @@
             document.getElementById('pharmacyName').innerText = "🏥 " + name;
             document.getElementById('offlinePharmacyTitle').innerText = name;
 
-            // تحديث الشريط السفلي المتحرك لكافة المنتجات
             if (data.Products && data.Products.length > 0) {
                 let tickerContent = "✨ أسعار اليوم لدى صيدليتنا: ";
                 data.Products.forEach(p => {
@@ -665,7 +693,7 @@
 
             renderLiveServices();
 
-            // جدول الأسعار الشامل
+            // جدول الأسعار
             const tBody = document.getElementById('tableBody');
             tBody.innerHTML = "";
             (data.Products || []).forEach(p => {
@@ -700,7 +728,7 @@
         }
 
         // -------------------------------------------------------------
-        // 🔄 حلقة العرض السينمائي الذكية والمتتالية بدقة (Smart Loop Engine)
+        // 🔄 حلقة العرض السينمائية المحدثة (Smart Loop Engine)
         // -------------------------------------------------------------
         let featuredIndex = 0;
 
@@ -712,11 +740,11 @@
                     continue;
                 }
 
-                // 1. فقرة جدول الأسعار الشامل (لن تعبر إلا عند الانتهاء من كامل الجدول)
+                // 1. فقرة جدول الأسعار (تتر مسلسل هادئ ومريح جدًا)
                 switchStage('stageTable');
-                await animateAndScrollTable();
+                await animateAndScrollTableCredits();
 
-                // 2. فقرة الأصناف المميزة (مع أنيميشن محاكي للبحث في جوجل)
+                // 2. فقرة الأصناف المميزة
                 if (dataStore.FeaturedProducts.length > 0) {
                     switchStage('stageFeatured');
                     await playGoogleSearchAnimation();
@@ -732,15 +760,11 @@
                 renderOffersBoard();
                 await sleep(10000);
 
-                // 5. فقرة عناوين الفروع (مستقلة)
-                switchStage('stageBranches');
-                renderBranchesStage();
-                await sleep(9000);
-
-                // 6. فقرة أرقام التليفون والتواصل (مستقلة)
-                switchStage('stageContacts');
-                renderContactsStage();
-                await sleep(9000);
+                // 5. الفقرة السينمائية الأخيرة (العناوين متراصة + الهواتف بالكتابة والتكتكة)
+                switchStage('stageCinematicContact');
+                renderCinematicBranches();
+                await playTypewriterPhoneAnimation();
+                await sleep(6000);
             }
         }
 
@@ -751,8 +775,8 @@
 
         function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-        // حركة التمرير الهادئة لجدول الأسعار (حجم الشاشة بالكامل)
-        function animateAndScrollTable() {
+        // 🎬 حركة تتر المسلسل المريحة لجدول الأسعار (End Credits Smooth Scroll)
+        function animateAndScrollTableCredits() {
             return new Promise((resolve) => {
                 const body = document.getElementById('tableBody');
                 body.scrollTop = 0;
@@ -763,45 +787,43 @@
                     const maxScroll = scrollHeight - clientHeight;
 
                     if (maxScroll <= 0) {
-                        setTimeout(resolve, 8000); // إذا كان الجدول قليل الأسطر
+                        setTimeout(resolve, 8000);
                         return;
                     }
 
-                    // حساب سرعة الحركة براحة تامة وحجم الشاشة
-                    const duration = Math.max(10, (maxScroll / 30)); 
+                    // حركة مريحة جداً ومتوسطة السرعة
+                    const duration = Math.max(12, (maxScroll / 25)); 
                     gsap.to(body, {
                         scrollTop: maxScroll,
                         duration: duration,
                         ease: "none",
                         onComplete: () => {
-                            setTimeout(resolve, 4000); // الانتظار لقراءة الآخير
+                            setTimeout(resolve, 4000); // إتاحة الوقت للعميل لقراءة نهاية الجدول بالكامل
                         }
                     });
                 }, 1500);
             });
         }
 
-        // أنيميشن محاكي البحث في جوجل للأصناف المميزة
+        // محاكي البحث في جوجل
         function playGoogleSearchAnimation() {
             return new Promise((resolve) => {
                 const item = dataStore.FeaturedProducts[featuredIndex];
                 featuredIndex = (featuredIndex + 1) % dataStore.FeaturedProducts.length;
 
-                // إعادة تهيئة الكارت
                 const card = document.getElementById('featuredCard');
                 gsap.set(card, { opacity: 0, y: 40 });
 
-                if (typedInstance) typedInstance.destroy();
+                if (typedSearchInstance) typedSearchInstance.destroy();
 
                 const pharmacyNameClean = dataStore.PharmacyName || "صيدلية الدكتور أحمد المميزة";
-                typedInstance = new Typed('#typedSearch', {
+                typedSearchInstance = new Typed('#typedSearch', {
                     strings: [`عناصر ${pharmacyNameClean}...`, `أحدث العروض: ${item.ItemName}`],
                     typeSpeed: 50,
                     backSpeed: 30,
                     showCursor: true,
                     cursorChar: '|',
                     onComplete: () => {
-                        // إظهار كارت المنتج بأنيميشن شيك بعد الكتابة
                         gsap.to(card, {
                             opacity: 1,
                             y: 0,
@@ -838,30 +860,48 @@
             document.getElementById('boardLinesContent').innerHTML = rawOffers.map(line => `<div class="board-line-item">◀◀ ${line}</div>`).join('');
         }
 
-        function renderBranchesStage() {
+        // رص العناوين بجانب بعضها
+        function renderCinematicBranches() {
             const branches = dataStore.Branches && dataStore.Branches.length > 0 
                 ? dataStore.Branches 
                 : ["الفرع الرئيسي: الشارع العام - بجوار المركز الطبي", "فرع المزرعة: طريق الخطاطبة - بجوار الجمعية الزراعية"];
             
-            document.getElementById('branchesGrid').innerHTML = branches.map(b => `
-                <div class="branch-card">
-                    <span class="branch-icon">🏢</span>
-                    <div class="branch-info-text">${b}</div>
+            document.getElementById('cinematicBranchesRow').innerHTML = branches.map(b => `
+                <div class="cinematic-branch-card">
+                    <span class="cinematic-branch-icon">🏢</span>
+                    <div class="cinematic-branch-text">${b}</div>
                 </div>
             `).join('');
         }
 
-        function renderContactsStage() {
-            const contacts = dataStore.Contacts && dataStore.Contacts.length > 0 
-                ? dataStore.Contacts 
-                : ["01092834429", "01210902302"];
-            
-            document.getElementById('contactsList').innerHTML = contacts.map((c, i) => `
-                <div class="contact-card">
-                    <span class="contact-label">📞 خط الخدمة والمبيعات (${i + 1}):</span>
-                    <span class="contact-number">${c}</span>
-                </div>
-            `).join('');
+        // ⌨️ أنيميشن كتابة أرقام الهاتف حرفاً بحرف مع صوت الكيبورد
+        function playTypewriterPhoneAnimation() {
+            return new Promise((resolve) => {
+                const contacts = dataStore.Contacts && dataStore.Contacts.length > 0 
+                    ? dataStore.Contacts 
+                    : ["01092834429", "01210902302"];
+                
+                if (typedPhoneInstance) typedPhoneInstance.destroy();
+
+                typedPhoneInstance = new Typed('#typedPhone', {
+                    strings: contacts,
+                    typeSpeed: 100,
+                    backSpeed: 50,
+                    backDelay: 2500,
+                    loop: false,
+                    showCursor: true,
+                    cursorChar: '❚',
+                    onStringTyped: () => {
+                        playClickSound();
+                    },
+                    preStringTyped: () => {
+                        playClickSound();
+                    },
+                    onComplete: () => {
+                        resolve();
+                    }
+                });
+            });
         }
     </script>
 </body>

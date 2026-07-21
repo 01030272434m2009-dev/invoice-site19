@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🏥 شاشة العروض والبث البيطري الذكية السينمائية</title>
     
-    <!-- خط Cairo المميز --> 
+    <!-- خط Cairo المميز -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- مكتبات الأنيميشن والارتباط -->
@@ -105,8 +105,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transform: scale(0.95);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: scale(0.97);
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
         }
 
         .stage-view.active {
@@ -148,55 +148,55 @@
             font-weight: 700;
         }
 
-        /* 🎨 شبكة الخدمات العصرية والأنيقة جداً */
+        /* شبكة الخدمات الشيك والعصرية */
         .services-grid-chic {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2.5vh 2vw;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             width: 100%;
             max-height: 100%;
-            padding: 10px;
+            padding: 15px;
+            justify-content: center;
         }
 
         .service-card-chic {
-            background: linear-gradient(145deg, #ffffff, #f0fdfa);
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
             border: 2px solid var(--border-color);
-            border-radius: 24px;
-            padding: 3vh 1.5vw;
+            border-radius: 20px;
+            padding: 25px 20px;
             text-align: center;
-            box-shadow: 0 12px 25px rgba(13, 148, 136, 0.12);
+            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.08);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
             overflow: hidden;
-            transition: all 0.4s ease;
+            transition: transform 0.3s ease;
         }
 
         .service-card-chic::before {
             content: '';
             position: absolute;
             top: 0;
+            right: 0;
             left: 0;
-            width: 100%;
-            height: 6px;
+            height: 5px;
             background: linear-gradient(90deg, var(--primary-teal), var(--accent-orange));
         }
 
         .service-icon-chic { 
-            font-size: clamp(3rem, 4vw, 4.5rem); 
-            margin-bottom: 1.5vh; 
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+            font-size: clamp(2.8rem, 3.5vw, 4rem); 
+            margin-bottom: 12px; 
         }
 
         .service-name-chic { 
-            font-size: clamp(1.3rem, 1.8vw, 1.9rem); 
+            font-size: clamp(1.3rem, 1.7vw, 1.8rem); 
             font-weight: 900; 
             color: var(--dark-teal); 
         }
 
-        /* جدول الأسعار السريع المحسن */
+        /* جدول الأسعار السلس والشيك */
         .table-card {
             background: var(--panel-white);
             border-radius: 20px;
@@ -231,9 +231,9 @@
         .table-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            padding: 2vh 2vw;
+            padding: 2.2vh 2vw;
             border-bottom: 2px solid #e2e8f0;
-            font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+            font-size: clamp(1.2rem, 1.8vw, 1.9rem);
             font-weight: 800;
             text-align: center;
             align-items: center;
@@ -465,7 +465,7 @@
             z-index: 101;
         }
 
-        /* Ticker المحاكي والتتّر السريع الأسفل */
+        /* Ticker المحاكي والتتّر الهادئ الأسفل */
         .footer-ticker {
             background: var(--panel-white);
             height: 12vh;
@@ -476,7 +476,7 @@
             overflow: hidden;
             white-space: nowrap;
             position: relative;
-            padding: 0 20px;
+            padding: 0 25px;
         }
 
         .ticker-typewriter-container {
@@ -522,7 +522,7 @@
             </div>
         </div>
 
-        <!-- 1. جدول الأسعار الذكي المقسم -->
+        <!-- 1. جدول الأسعار المقسم بروقان وتدفق سلس -->
         <div class="stage-view full-screen-stage" id="stageTable">
             <div class="table-card">
                 <div class="table-header">
@@ -543,9 +543,9 @@
             <div class="featured-card" id="featuredCard" style="opacity: 0; transform: translateY(30px);"></div>
         </div>
 
-        <!-- 3. خدماتنا الشيك جداً -->
+        <!-- 3. خدماتنا الشيك المصلحة بالكامل -->
         <div class="stage-view" id="stageServices">
-            <div style="width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); border-radius: 30px; padding: 4vh 3vw; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+            <div style="width: 100%; height: 100%; background: rgba(255, 255, 255, 0.96); border-radius: 30px; padding: 4vh 3vw; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
                 <h2 style="font-size: clamp(1.8rem, 3vw, 3.2rem); color: var(--dark-teal); margin-bottom: 3vh; font-weight: 900;">✨ خدماتنا الرائدة والرعاية المتميزة ✨</h2>
                 <div class="services-grid-chic" id="liveServicesGrid"></div>
             </div>
@@ -573,10 +573,10 @@
 
     </div>
 
-    <!-- Ticker المحاكي لكتابة الأسعار والأصناف بالحركة والشيك -->
+    <!-- Ticker أسفل الشاشة المريح براحة تامة -->
     <div class="footer-ticker">
         <div class="ticker-typewriter-container">
-            <span class="ticker-prefix">🔥 مباشر الأسعار والخدمات: </span>
+            <span class="ticker-prefix">🔥 أسعار المنتجات المباشرة: </span>
             <span id="typedTicker"></span>
         </div>
     </div>
@@ -588,28 +588,21 @@
         let typedPhoneInstance = null;
         let typedTickerInstance = null;
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playClickSound() {
-            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(1200 + Math.random() * 400, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.03);
-        }
-
         const serviceIcons = ['🩺', '💊', '🧪', '💉', '🔬', '🚑', '🥩', '🌾', '🛡️', '📊'];
+
+        const defaultServices = [
+            "فحص بالسونار ورعاية بيطرية",
+            "أدوية ومستلزمات علاجية متكاملة",
+            "تحصينات ولقاحات معتمدة",
+            "برامج وقاية وتغذية للماشية",
+            "استشارات وزيارات منزلية عاجلة"
+        ];
 
         let dataStore = {
             PharmacyName: "صيدلية الدكتور أحمد إبراهيم البيطرية",
             Products: [],
             FeaturedProducts: [],
-            Services: ["فحص بالسونار متطور", "أدوية ومستلزمات بيطرية", "لقاحات معتمدة دولياً", "برامج تحصينات شاملة", "استشارات وزيارات منزلية"],
+            Services: defaultServices,
             Offers: [],
             Branches: ["الفرع الرئيسي: الشارع العام - بجوار المركز الطبي", "فرع المزرعة: طريق الخطاطبة - بجوار الجمعية الزراعية"],
             Contacts: ["01092834429", "01210902302"]
@@ -655,7 +648,7 @@
                 connectToServer(savedWs);
             }
             
-            renderOfflineServices();
+            renderServicesList();
             startSmartShowLoop();
         });
 
@@ -697,35 +690,34 @@
             document.getElementById('pharmacyName').innerText = "🏥 " + name;
             document.getElementById('offlinePharmacyTitle').innerText = name;
 
-            if (typeof data.Services === 'string') {
+            // التأكد من استلام قائمة الخدمات أو استخدام القائمة الافتراضية
+            if (typeof data.Services === 'string' && data.Services.trim() !== '') {
                 dataStore.Services = data.Services.split('--').map(s => s.trim()).filter(s => s.length > 0);
+            } else if (!data.Services || data.Services.length === 0) {
+                dataStore.Services = defaultServices;
             }
 
-            renderLiveServices();
+            renderServicesList();
             dataStore.FeaturedProducts = (data.Products || []).filter(p => p.IsFeatured);
             initTickerTypewriter();
         }
 
-        /* 🎨 رسم خدماتنا بشكل شيك وجميل */
-        function renderOfflineServices() {
-            document.getElementById('offlineServicesGrid').innerHTML = dataStore.Services.map((s, i) => `
+        /* 🎨 إصلاح عرض شبكة الخدمات بالكامل لتظهر دائمًا بدون مشاكل */
+        function renderServicesList() {
+            const list = (dataStore.Services && dataStore.Services.length > 0) ? dataStore.Services : defaultServices;
+            
+            const htmlCards = list.map((s, i) => `
                 <div class="service-card-chic">
                     <span class="service-icon-chic">${serviceIcons[i % serviceIcons.length]}</span>
                     <div class="service-name-chic">${s}</div>
                 </div>
             `).join('');
+
+            document.getElementById('offlineServicesGrid').innerHTML = htmlCards;
+            document.getElementById('liveServicesGrid').innerHTML = htmlCards;
         }
 
-        function renderLiveServices() {
-            document.getElementById('liveServicesGrid').innerHTML = (dataStore.Services || []).map((s, i) => `
-                <div class="service-card-chic">
-                    <span class="service-icon-chic">${serviceIcons[i % serviceIcons.length]}</span>
-                    <div class="service-name-chic">${s}</div>
-                </div>
-            `).join('');
-        }
-
-        // ⌨️ محاكاة كتابة أرقام وأسماء الأصناف في التتر السفلي
+        // ⌨️ التتر السفلي يعمل براحة وموثوقية
         function initTickerTypewriter() {
             if (!dataStore.Products || dataStore.Products.length === 0) return;
             if (typedTickerInstance) typedTickerInstance.destroy();
@@ -736,83 +728,88 @@
 
             typedTickerInstance = new Typed('#typedTicker', {
                 strings: tickerStrings,
-                typeSpeed: 40,
-                backSpeed: 20,
-                backDelay: 2000,
+                typeSpeed: 50,
+                backSpeed: 30,
+                backDelay: 2500,
                 loop: true,
                 showCursor: true,
                 cursorChar: '❚'
             });
         }
 
-        // 🔄 حلقة العرض الذكية المقسمة لفقرات مع باقي الشاشات في المنتصف
+        // 🔄 حلقة العرض الموزونة (الأسعار أسرع وسلسة - باقي الفقرات براحة جداً)
         let featuredIndex = 0;
 
         async function startSmartShowLoop() {
             while (true) {
                 if (!isConnected) {
                     switchStage('stageOffline');
-                    await sleep(8000);
+                    await sleep(10000);
                     continue;
                 }
 
                 const allProducts = dataStore.Products || [];
-                const chunkSize = 20; // أقصى حد 20 صنف لكل فقرة
+                const chunkSize = 20; // 20 صنف لكل فقرة بحد أقصى
                 const productChunks = [];
                 
                 for (let i = 0; i < allProducts.length; i += chunkSize) {
                     productChunks.push(allProducts.slice(i, i + chunkSize));
                 }
 
-                // إذا لم توجد منتجات نعرض القالب الافتراضي
                 if (productChunks.length === 0) productChunks.push([]);
 
-                // ------------------ الفقرة الأولى من الجدول ------------------
+                // ------------------ 1. الفقرة الأولى من جدول الأسعار (سلسة وجميلة) ------------------
                 renderTableChunk(productChunks[0] || []);
                 switchStage('stageTable');
                 await animateAndScrollTableCredits();
 
-                // ⬅️ فقرة في النص: خدماتنا المميزة
+                // ⬅️ فقرة براحة تامة: خدماتنا المتميزة
                 switchStage('stageServices');
-                await sleep(7000);
+                await sleep(12000); // 12 ثانية كاملة ليتمكن الزبون من قراءتها براحة
 
-                // ------------------ الفقرة الثانية من الجدول (إن وجدت) ------------------
+                // ------------------ 2. الفقرة الثانية من جدول الأسعار (إن وجدت) ------------------
                 if (productChunks.length > 1) {
                     renderTableChunk(productChunks[1]);
                     switchStage('stageTable');
                     await animateAndScrollTableCredits();
                 }
 
-                // ⬅️ فقرة في النص: محاكي البحث والأصناف المميزة
+                // ⬅️ فقرة براحة تامة: محاكي البحث والمنتجات المميزة
                 if (dataStore.FeaturedProducts.length > 0) {
                     switchStage('stageFeatured');
                     await playGoogleSearchAnimation();
-                    await sleep(7000);
+                    await sleep(11000); // 11 ثانية لمشاهدة المنتج
                 }
 
-                // ------------------ الفقرة الثالثة من الجدول (إن وجدت) ------------------
+                // ------------------ 3. الفقرة الثالثة من جدول الأسعار (إن وجدت) ------------------
                 if (productChunks.length > 2) {
                     renderTableChunk(productChunks[2]);
                     switchStage('stageTable');
                     await animateAndScrollTableCredits();
                 }
 
-                // ⬅️ فقرة في النص: العروض والتنويهات
+                // ⬅️ فقرة براحة تامة: العروض والتنويهات
                 switchStage('stageOffers');
                 renderOffersBoard();
-                await sleep(8000);
+                await sleep(12000);
 
-                // ⬅️ الفقرة الأخيرة: التواصل أرقام وحسابات
+                // ⬅️ فقرة براحة تامة: التواصل وأرقام الفروع
                 switchStage('stageCinematicContact');
                 renderCinematicBranches();
                 await playTypewriterPhoneAnimation();
-                await sleep(6000);
+                await sleep(10000);
             }
         }
 
         function renderTableChunk(productsList) {
             const tBody = document.getElementById('tableBody');
             tBody.innerHTML = "";
+
+            if (!productsList || productsList.length === 0) {
+                tBody.innerHTML = `<div style="text-align:center; padding: 50px; font-size: 1.8rem; font-weight:800; color:var(--text-muted);">جاري تحديث قائمة الأسعار...</div>`;
+                return;
+            }
+
             productsList.forEach(p => {
                 tBody.innerHTML += `
                     <div class="table-row">
@@ -831,7 +828,7 @@
 
         function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-        // 🎬 أنيميشن تمرير الجدول بشكل أسرع وأكثر انسيابية
+        // 🎬 حركة الأسعار السلسة والأنيقة (تمنع التقطيع وسريعة الاستجابة)
         function animateAndScrollTableCredits() {
             return new Promise((resolve) => {
                 const body = document.getElementById('tableBody');
@@ -843,40 +840,40 @@
                     const maxScroll = scrollHeight - clientHeight;
 
                     if (maxScroll <= 0) {
-                        setTimeout(resolve, 5000);
+                        setTimeout(resolve, 6000);
                         return;
                     }
 
-                    // زيادة السرعة (قسمة على 45 لسرعة استجابة أعلى)
-                    const duration = Math.max(4, (maxScroll / 45)); 
+                    // سرعة سلسة، بدون تهنيج ولا بطء قاتل
+                    const duration = Math.max(5, (maxScroll / 55)); 
                     gsap.to(body, {
                         scrollTop: maxScroll,
                         duration: duration,
-                        ease: "none",
+                        ease: "power1.inOut",
                         onComplete: () => {
-                            setTimeout(resolve, 2000);
+                            setTimeout(resolve, 2500); // وقوف هادئ في نهاية السكرول لمراجعة آخر القائمة
                         }
                     });
-                }, 800);
+                }, 1000);
             });
         }
 
-        // محاكي البحث في جوجل
+        // محاكي البحث
         function playGoogleSearchAnimation() {
             return new Promise((resolve) => {
                 const item = dataStore.FeaturedProducts[featuredIndex];
                 featuredIndex = (featuredIndex + 1) % dataStore.FeaturedProducts.length;
 
                 const card = document.getElementById('featuredCard');
-                gsap.set(card, { opacity: 0, y: 40 });
+                gsap.set(card, { opacity: 0, y: 30 });
 
                 if (typedSearchInstance) typedSearchInstance.destroy();
 
-                const pharmacyNameClean = dataStore.PharmacyName || "صيدلية الدكتور أحمد المميزة";
+                const pharmacyNameClean = dataStore.PharmacyName || "صيدليتنا المميزة";
                 typedSearchInstance = new Typed('#typedSearch', {
-                    strings: [`عناصر ${pharmacyNameClean}...`, `عرض خاص: ${item.ItemName}`],
-                    typeSpeed: 40,
-                    backSpeed: 25,
+                    strings: [`خدمات وعروض ${pharmacyNameClean}...`, `صنف مميز: ${item.ItemName}`],
+                    typeSpeed: 50,
+                    backSpeed: 30,
                     showCursor: true,
                     cursorChar: '|',
                     onComplete: () => {
@@ -884,7 +881,7 @@
                             opacity: 1,
                             y: 0,
                             duration: 0.8,
-                            ease: "back.out(1.7)"
+                            ease: "power2.out"
                         });
 
                         card.innerHTML = `
@@ -941,12 +938,10 @@
                     strings: contacts,
                     typeSpeed: 80,
                     backSpeed: 40,
-                    backDelay: 2000,
+                    backDelay: 2500,
                     loop: false,
                     showCursor: true,
                     cursorChar: '❚',
-                    onStringTyped: () => { playClickSound(); },
-                    preStringTyped: () => { playClickSound(); },
                     onComplete: () => { resolve(); }
                 });
             });

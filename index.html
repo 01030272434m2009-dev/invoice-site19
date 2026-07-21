@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl"> 
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏥 شاشة العروض والبث البيطري الذكية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- مكتبة QR Code -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- مكتبة PeerJS للربط اللحظي المباشر -->
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <title>🏥 شاشة العروض والبث البيطري الذكية السينمائية</title>
     
+    <!-- خط Cairo المميز -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- مكتبات الأنيميشن والارتباط -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <!-- مكتبة GSAP للأنيميشن السينمائي -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- مكتبة Typed.js لمحاكاة كتابة محرك البحث -->
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
     <style>
         :root {
             --bg-main: #0b1325;
@@ -25,30 +31,30 @@
             --glow-teal: rgba(13, 148, 136, 0.4);
         }
 
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Cairo', sans-serif; 
-            margin: 0; 
-            padding: 0; 
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         html, body {
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); 
-            color: var(--text-main); 
-            display: flex; 
-            flex-direction: column; 
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 1. Header مرن يتكيف تماماً مع جميع مقاسات الشاشات */
+        /* 1. Header الشاشة */
         .header {
             background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
             color: #fff;
             padding: 1vh 3vw;
-            height: 12vh;
-            min-height: 80px;
+            height: 10vh;
+            min-height: 75px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -57,20 +63,18 @@
             z-index: 10;
         }
         
-        .pharmacy-title { 
-            font-size: clamp(1.5rem, 3.2vw, 3.2rem); 
-            font-weight: 900; 
-            text-shadow: 0 3px 6px rgba(0,0,0,0.3); 
+        .pharmacy-title {
+            font-size: clamp(1.5rem, 3vw, 3rem);
+            font-weight: 900;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .status-badge {
             padding: 0.8vh 2vw;
             border-radius: 40px;
             font-weight: 800;
-            font-size: clamp(0.9rem, 1.4vw, 1.5rem);
+            font-size: clamp(0.9rem, 1.3vw, 1.4rem);
             background: #ef4444;
             color: #fff;
             transition: all 0.5s ease;
@@ -78,12 +82,12 @@
             white-space: nowrap;
         }
         
-        .status-badge.online { 
-            background: #10b981; 
+        .status-badge.online {
+            background: #10b981;
             box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
         }
 
-        /* 2. حاوية المسرح الرئيسي الشاملة المتجاوبة */
+        /* 2. المسرح الرئيسي */
         .stage-container {
             flex: 1;
             position: relative;
@@ -91,31 +95,34 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2vh 2vw;
-            height: 76vh;
+            padding: 1.5vh 2vw;
+            height: 78vh;
         }
 
         .stage-view {
             position: absolute;
             width: 96%;
-            height: 94%;
+            height: 96%;
             opacity: 0;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            transform: scale(0.95);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
         .stage-view.active {
             opacity: 1;
             display: flex;
-            animation: montageIn 0.8s forwards;
+            transform: scale(1);
         }
 
-        @keyframes montageIn {
-            0% { opacity: 0; transform: scale(0.92) translateY(20px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+        /* شاشة جدول الأسعار (ملء الشاشة بالكامل) */
+        .stage-view.full-screen-stage {
+            width: 100% !important;
+            height: 100% !important;
+            padding: 1vh 1vw;
         }
 
         /* شاشة الانفصال */
@@ -123,7 +130,7 @@
             text-align: center;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             padding: 3vh 3vw;
             border-radius: 25px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
@@ -133,34 +140,32 @@
         }
 
         .offline-title {
-            font-size: clamp(2rem, 4vw, 4rem);
+            font-size: clamp(2rem, 3.8vw, 3.8rem);
             font-weight: 900;
             color: var(--dark-teal);
             margin-bottom: 1.5vh;
         }
 
         .offline-subtitle {
-            font-size: clamp(1.1rem, 2vw, 2rem);
+            font-size: clamp(1.1rem, 1.8vw, 1.8rem);
             color: var(--text-muted);
             margin-bottom: 3vh;
             font-weight: 700;
         }
 
-        /* شبكة الخدمات متجاوبة حسب الشاشة */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 2vh 2vw;
             width: 100%;
             max-height: 100%;
-            overflow-y: auto;
         }
 
         .service-card {
             background: #f0fdfa;
             border: 3px solid var(--border-color);
             border-radius: 20px;
-            padding: 2vh 1vw;
+            padding: 2.5vh 1vw;
             text-align: center;
             box-shadow: 0 8px 15px rgba(13, 148, 136, 0.1);
             display: flex;
@@ -169,13 +174,13 @@
             align-items: center;
         }
 
-        .service-icon { font-size: clamp(2.5rem, 4vw, 4rem); margin-bottom: 1vh; }
-        .service-name { font-size: clamp(1.2rem, 1.8vw, 1.8rem); font-weight: 800; color: var(--dark-teal); }
+        .service-icon { font-size: clamp(2.5rem, 3.5vw, 3.8rem); margin-bottom: 1vh; }
+        .service-name { font-size: clamp(1.2rem, 1.6vw, 1.6rem); font-weight: 800; color: var(--dark-teal); }
 
-        /* جدول الأسعار الشامل متجاوب */
+        /* جدول الأسعار ملء الشاشة المتجاوب */
         .table-card {
             background: var(--panel-white);
-            border-radius: 25px;
+            border-radius: 20px;
             width: 100%;
             height: 100%;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -191,18 +196,23 @@
             padding: 2vh 2vw;
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            font-size: clamp(1.2rem, 2vw, 2.2rem);
+            font-size: clamp(1.3rem, 2vw, 2.2rem);
             font-weight: 900;
             text-align: center;
         }
 
-        .table-body { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+        .table-body {
+            flex: 1;
+            overflow-y: hidden; /* الحركة تدار بالبرمجة آلياً وبنعومة */
+            scroll-behavior: smooth;
+        }
+
         .table-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            padding: 2vh 2vw;
+            padding: 2.2vh 2vw;
             border-bottom: 2px solid #e2e8f0;
-            font-size: clamp(1.1rem, 1.8vw, 1.8rem);
+            font-size: clamp(1.2rem, 1.8vw, 1.8rem);
             font-weight: 800;
             text-align: center;
             align-items: center;
@@ -212,14 +222,40 @@
         .price-retail { color: var(--primary-teal); font-weight: 900; }
         .price-wholesale { color: var(--accent-orange); font-weight: 900; }
 
-        /* كارت الأصناف المميزة متجاوب */
+        /* محاكي شريط بحث جوجل للجزء المميز */
+        .google-search-box {
+            background: #ffffff;
+            border-radius: 50px;
+            padding: 15px 35px;
+            width: 80%;
+            max-width: 900px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 3px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .google-icon { font-size: 2.2rem; }
+        .search-input-text {
+            font-size: clamp(1.3rem, 2.2vw, 2.4rem);
+            font-weight: 800;
+            color: #1e293b;
+            flex: 1;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* كارت الأصناف المميزة */
         .featured-card {
             background: #ffffff;
             border-radius: 35px;
             padding: 4vh 4vw;
             width: 90%;
-            max-width: 1200px;
-            height: 95%;
+            max-width: 1100px;
+            height: 75%;
             border: 5px solid var(--primary-teal);
             box-shadow: 0 25px 60px rgba(13, 148, 136, 0.3);
             text-align: center;
@@ -234,67 +270,52 @@
             color: white;
             padding: 1vh 3vw;
             border-radius: 40px;
-            font-size: clamp(1.2rem, 2vw, 2.2rem);
+            font-size: clamp(1.2rem, 1.8vw, 2rem);
             font-weight: 900;
             box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4);
         }
 
-        .item-title { font-size: clamp(2.2rem, 4vw, 4.2rem); font-weight: 900; color: var(--text-main); }
-        .old-price-tag { color: #ef4444; text-decoration: line-through; font-size: clamp(1.3rem, 2vw, 2.2rem); font-weight: 800; }
+        .item-title { font-size: clamp(2.2rem, 3.8vw, 4rem); font-weight: 900; color: var(--text-main); }
+        .old-price-tag { color: #ef4444; text-decoration: line-through; font-size: clamp(1.2rem, 1.8vw, 2rem); font-weight: 800; }
         
         .price-boxes { display: flex; gap: 2vw; width: 100%; justify-content: center; }
         .p-box { flex: 1; background: #f0fdfa; padding: 2vh 1vw; border-radius: 20px; border: 3px solid var(--border-color); }
         .p-box.wholesale { background: #fff7ed; border-color: #ffedd5; }
-        .p-box .label { font-size: clamp(1.1rem, 1.6vw, 1.6rem); color: var(--text-muted); font-weight: 800; margin-bottom: 5px; }
-        .p-box .val { font-size: clamp(2rem, 3.5vw, 3.8rem); font-weight: 900; }
+        .p-box .label { font-size: clamp(1.1rem, 1.5vw, 1.5rem); color: var(--text-muted); font-weight: 800; margin-bottom: 5px; }
+        .p-box .val { font-size: clamp(2rem, 3.2vw, 3.5rem); font-weight: 900; }
 
-        /* شاشة الخدمات التفصيلية */
-        .services-stage-container {
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 30px;
-            padding: 4vh 3vw;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-
-        /* ------------------------------------------------------------- */
-        /* 💡 تصميم تتر العروض المقتبس والمطابق لملف C# المرجعي (DrawFloatingNoBorderAd) */
-        /* ------------------------------------------------------------- */
+        /* شاشة التنويهات والعروض */
         .board-ad-container {
             width: 95%;
             height: 90%;
             background: #ffffff;
-            border-radius: 20px;
+            border-radius: 25px;
             border: 4px solid var(--primary-teal);
             box-shadow: 0 20px 40px rgba(0,0,0,0.25);
             position: relative;
             display: flex;
             flex-direction: column;
-            padding: 20px 40px;
+            padding: 30px 40px;
             justify-content: space-between;
         }
 
         .board-ad-header {
             position: absolute;
-            top: -30px;
+            top: -28px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--primary-teal);
             color: #ffffff;
-            padding: 10px 40px;
-            border-radius: 12px;
-            font-size: clamp(1.5rem, 2.8vw, 3rem);
+            padding: 8px 40px;
+            border-radius: 15px;
+            font-size: clamp(1.4rem, 2.5vw, 2.8rem);
             font-weight: 900;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             white-space: nowrap;
         }
 
         .board-lines-content {
-            margin-top: 50px;
+            margin-top: 40px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -302,9 +323,9 @@
         }
 
         .board-line-item {
-            border-bottom: 2px solid #cbd5e1;
-            padding-bottom: 8px;
-            font-size: clamp(1.4rem, 2.5vw, 2.6rem);
+            border-bottom: 2px dashed #cbd5e1;
+            padding-bottom: 12px;
+            font-size: clamp(1.4rem, 2.3vw, 2.5rem);
             font-weight: 800;
             color: #1e293b;
             text-align: right;
@@ -312,51 +333,85 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* 💡 تصميم تتر الفروع والمناطق المقتبس والمطابق لملف C# المرجعي (DrawBranchSequence) */
+        /* 📍 شاشة العناوين والفروع (مستقلة وشيك جداً) */
         /* ------------------------------------------------------------- */
-        .contact-stage-container {
-            width: 100%;
-            height: 100%;
+        .branches-stage-container {
+            width: 90%;
+            height: 90%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
         }
 
-        .contact-stage-title {
-            font-size: clamp(1.8rem, 3vw, 3.2rem);
+        .section-title-badge {
+            background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
+            color: white;
+            padding: 12px 35px;
+            border-radius: 30px;
+            font-size: clamp(1.6rem, 2.8vw, 3rem);
             font-weight: 900;
-            color: #ffffff;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.4);
         }
 
-        .contact-cards-list {
+        .branches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+
+        .branch-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 25px 30px;
+            border-right: 8px solid var(--primary-teal);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .branch-icon { font-size: 3rem; }
+        .branch-info-text { font-size: clamp(1.2rem, 2vw, 2.2rem); font-weight: 800; color: #0f172a; line-height: 1.4; }
+
+        /* ------------------------------------------------------------- */
+        /* 📞 شاشة أرقام التواصل والتليفون (مستقلة وشيك جداً) */
+        /* ------------------------------------------------------------- */
+        .contacts-stage-container {
             width: 90%;
-            max-height: 80%;
+            height: 90%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
+            align-items: center;
         }
 
-        .contact-card-item {
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 15px;
-            padding: 20px 30px;
-            font-size: clamp(1.3rem, 2.2vw, 2.5rem);
-            font-weight: 900;
-            color: #1e293b;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 85%;
+            max-width: 900px;
         }
+
+        .contact-card {
+            background: linear-gradient(135deg, #ffffff, #f0fdfa);
+            border: 3px solid var(--border-color);
+            border-radius: 25px;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .contact-label { font-size: clamp(1.3rem, 2vw, 2.2rem); font-weight: 800; color: var(--dark-teal); }
+        .contact-number { font-size: clamp(1.8rem, 3vw, 3.2rem); font-weight: 900; color: var(--accent-orange); letter-spacing: 2px; direction: ltr; }
 
         /* نافذة QR والزر الخفي */
         .qr-connect-box {
             position: fixed;
-            top: 13vh;
+            top: 12vh;
             left: 20px;
             background: var(--panel-white);
             padding: 15px;
@@ -373,7 +428,7 @@
 
         .qr-toggle-btn {
             position: fixed;
-            bottom: 12vh;
+            bottom: 11vh;
             left: 10px;
             width: 40px;
             height: 40px;
@@ -384,11 +439,11 @@
             z-index: 101;
         }
 
-        /* 3. الشريط المتحرك السفلي المستمر (Footer Ticker) */
+        /* 3. الشريط المتحرك السفلي المستمر */
         .footer-ticker {
             background: var(--panel-white);
             height: 12vh;
-            min-height: 70px;
+            min-height: 65px;
             border-top: 5px solid var(--primary-teal);
             display: flex;
             align-items: center;
@@ -399,10 +454,10 @@
 
         .ticker-text {
             display: inline-block;
-            font-size: clamp(1.4rem, 2.5vw, 2.6rem);
+            font-size: clamp(1.4rem, 2.3vw, 2.5rem);
             font-weight: 900;
             color: var(--text-main);
-            animation: marquee 35s linear infinite;
+            animation: marquee 40s linear infinite;
         }
 
         @keyframes marquee { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
@@ -410,16 +465,14 @@
 </head>
 <body>
 
-    <!-- الزر الخفي لإظهار/إخفاء الـ QR Code عند الحاجة -->
     <button class="qr-toggle-btn" onclick="toggleQR()" title="عرض / إخفاء QR Code"></button>
 
-    <!-- نافذة QR للربط -->
     <div class="qr-connect-box" id="qrBox">
         <div id="qrcode"></div>
         <p>📱 امسح لربط الشاشة</p>
     </div>
 
-    <!-- Header الطبي السلس -->
+    <!-- Header الطبي -->
     <div class="header">
         <div class="pharmacy-title" id="pharmacyName">🏥 صيدلية الدكتور أحمد إبراهيم البيطرية</div>
         <div id="statusBadge" class="status-badge">مفصول 🔴</div>
@@ -428,7 +481,7 @@
     <!-- Stage Container الرئيسي -->
     <div class="stage-container">
         
-        <!-- مرحلة 0: حالة الانفصال عن السيرفر -->
+        <!-- 0. شاشة الانفصال -->
         <div class="stage-view active" id="stageOffline">
             <div class="offline-hero">
                 <h1 class="offline-title" id="offlinePharmacyTitle">صيدلية الدكتور أحمد إبراهيم البيطرية</h1>
@@ -437,9 +490,8 @@
             </div>
         </div>
 
-        <!-- مرحلة 1: جدول الأسعار الشامل -->
-        <div class="stage-view" id="stageTable">
-            <h2 style="font-size: clamp(1.5rem, 2.8vw, 3rem); color: #ffffff; margin-bottom: 1.5vh; font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">📋 الدليل الموحد لأسعار المستحضرات والأدوية</h2>
+        <!-- 1. الدليل الموحد لأسعار المستحضرات (ملء الشاشة بالكامل) -->
+        <div class="stage-view full-screen-stage" id="stageTable">
             <div class="table-card">
                 <div class="table-header">
                     <div>اسم الصنف الدوائي</div>
@@ -450,20 +502,24 @@
             </div>
         </div>
 
-        <!-- مرحلة 2: الأصناف المميزة -->
+        <!-- 2. محاكي البحث والأصناف المميزة -->
         <div class="stage-view" id="stageFeatured">
-            <div class="featured-card" id="featuredCard"></div>
+            <div class="google-search-box">
+                <span class="google-icon">🔍</span>
+                <div class="search-input-text"><span id="typedSearch"></span></div>
+            </div>
+            <div class="featured-card" id="featuredCard" style="opacity: 0; transform: translateY(30px);"></div>
         </div>
 
-        <!-- مرحلة 3: خدماتنا التفصيلية -->
+        <!-- 3. خدماتنا التفصيلية -->
         <div class="stage-view" id="stageServices">
-            <div class="services-stage-container">
+            <div style="width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); border-radius: 30px; padding: 4vh 3vw; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
                 <h2 style="font-size: clamp(1.8rem, 3vw, 3.2rem); color: var(--dark-teal); margin-bottom: 3vh; font-weight: 900;">🛠️ خدماتنا الرائدة والرعاية المتميزة</h2>
                 <div class="services-grid" id="liveServicesGrid"></div>
             </div>
         </div>
 
-        <!-- مرحلة 4: تتر لوحة العروض المصممة والمسطرة (مطابق لملف C# المرجعي) -->
+        <!-- 4. تتر العروض والتنويهات -->
         <div class="stage-view" id="stageOffers">
             <div class="board-ad-container">
                 <div class="board-ad-header">📢 إعلان هام وتنويه من الصيدلية</div>
@@ -471,11 +527,19 @@
             </div>
         </div>
 
-        <!-- مرحلة 5: تتر كروت الفروع والعناوين وأرقام التواصل (مطابق لملف C# المرجعي) -->
-        <div class="stage-view" id="stageInfo">
-            <div class="contact-stage-container">
-                <div class="contact-stage-title">📍 فروعنا، منافذ الخدمة وأرقام التواصل السريع</div>
-                <div class="contact-cards-list" id="contactCardsList"></div>
+        <!-- 5. فقرة العناوين والفروع (مستقلة) -->
+        <div class="stage-view" id="stageBranches">
+            <div class="branches-stage-container">
+                <div class="section-title-badge">📍 عناويننا وفروع الخدمة</div>
+                <div class="branches-grid" id="branchesGrid"></div>
+            </div>
+        </div>
+
+        <!-- 6. فقرة أرقام التليفون والتواصل (مستقلة) -->
+        <div class="stage-view" id="stageContacts">
+            <div class="contacts-stage-container">
+                <div class="section-title-badge" style="background: linear-gradient(135deg, var(--accent-orange), #c2410c);">📞 أرقام التواصل والخدمة السريعة</div>
+                <div class="contacts-list" id="contactsList"></div>
             </div>
         </div>
 
@@ -489,8 +553,7 @@
     <script>
         let ws = null;
         let isConnected = false;
-        let currentStageIndex = 0;
-        let scrollInterval = null;
+        let typedInstance = null;
 
         const serviceIcons = ['🩺', '💊', '🧪', '💉', '🔬', '🚑', '🥩', '🌾', '🛡️', '📊'];
 
@@ -500,8 +563,8 @@
             FeaturedProducts: [],
             Services: ["فحص بالسونار", "أدوية ومستلزمات", "لقاحات معتمدة", "برامج تحصينات", "زيارات منزلية"],
             Offers: [],
-            Branches: [],
-            Contacts: [],
+            Branches: ["الفرع الرئيسي: الشارع العام - بجوار المركز الطبي", "فرع المزرعة: طريق الخطاطبة - بجوار الجمعية الزراعية"],
+            Contacts: ["01092834429", "01210902302"],
             TickerText: "مرحباً بكم في صيدليتنا البيطرية.."
         };
 
@@ -522,7 +585,6 @@
 
         function initPeerListener() {
             const peer = new Peer(tvSessionId);
-            peer.on('open', (id) => console.log("TV Peer ID:", id));
             peer.on('connection', (conn) => {
                 conn.on('data', (data) => {
                     if (data && data.wsUrl) {
@@ -547,12 +609,12 @@
             }
             
             renderOfflineServices();
+            startSmartShowLoop(); // بدء حلقة العرض التلقائية الذكية
         });
 
         function connectToServer(wsUrl) {
             try {
                 if (ws) ws.close();
-
                 ws = new WebSocket(wsUrl);
                 ws.onopen = () => {
                     isConnected = true;
@@ -588,26 +650,17 @@
             document.getElementById('pharmacyName').innerText = "🏥 " + name;
             document.getElementById('offlinePharmacyTitle').innerText = name;
 
-            // تحديث الشريط السفلي المتحرك لكافة المنتجات بشكل آلي مثل كود C#
+            // تحديث الشريط السفلي المتحرك لكافة المنتجات
             if (data.Products && data.Products.length > 0) {
                 let tickerContent = "✨ أسعار اليوم لدى صيدليتنا: ";
                 data.Products.forEach(p => {
                     tickerContent += ` 🟢 ${p.ItemName} (قطاعي: ${p.RetailPrice} ج.م / جملة: ${p.WholesalePrice} ج.م)    ★   `;
                 });
                 document.getElementById('tickerText').innerText = tickerContent;
-            } else {
-                document.getElementById('tickerText').innerText = data.TickerText || "مرحباً بكم في صيدليتنا البيطرية..";
             }
 
             if (typeof data.Services === 'string') {
                 dataStore.Services = data.Services.split('--').map(s => s.trim()).filter(s => s.length > 0);
-            } else if (data.Ads && Array.isArray(data.Ads)) {
-                let parsed = [];
-                data.Ads.forEach(ad => {
-                    if (ad.includes('--')) parsed.push(...ad.split('--').map(s => s.trim()));
-                    else parsed.push(ad);
-                });
-                dataStore.Services = parsed;
             }
 
             renderLiveServices();
@@ -625,13 +678,11 @@
                 `;
             });
 
-            // فلترة الأصناف المتميزة فقط للكروت الكبيرة
             dataStore.FeaturedProducts = (data.Products || []).filter(p => p.IsFeatured);
         }
 
         function renderOfflineServices() {
-            const grid = document.getElementById('offlineServicesGrid');
-            grid.innerHTML = dataStore.Services.map((s, i) => `
+            document.getElementById('offlineServicesGrid').innerHTML = dataStore.Services.map((s, i) => `
                 <div class="service-card">
                     <span class="service-icon">${serviceIcons[i % serviceIcons.length]}</span>
                     <div class="service-name">${s}</div>
@@ -640,8 +691,7 @@
         }
 
         function renderLiveServices() {
-            const grid = document.getElementById('liveServicesGrid');
-            grid.innerHTML = (dataStore.Services || []).map((s, i) => `
+            document.getElementById('liveServicesGrid').innerHTML = (dataStore.Services || []).map((s, i) => `
                 <div class="service-card">
                     <span class="service-icon">${serviceIcons[i % serviceIcons.length]}</span>
                     <div class="service-name">${s}</div>
@@ -649,75 +699,170 @@
             `).join('');
         }
 
-        function startAutoScrollTable() {
-            const body = document.getElementById('tableBody');
-            body.scrollTop = 0;
-            clearInterval(scrollInterval);
-            scrollInterval = setInterval(() => {
-                body.scrollTop += 2;
-                if (body.scrollTop + body.clientHeight >= body.scrollHeight) {
-                    body.scrollTop = 0;
-                }
-            }, 50);
-        }
-
+        // -------------------------------------------------------------
+        // 🔄 حلقة العرض السينمائي الذكية والمتتالية بدقة (Smart Loop Engine)
+        // -------------------------------------------------------------
         let featuredIndex = 0;
 
-        // التبديل الدوري السلس بين الشاشات
-        setInterval(() => {
+        async function startSmartShowLoop() {
+            while (true) {
+                if (!isConnected) {
+                    switchStage('stageOffline');
+                    await sleep(10000);
+                    continue;
+                }
+
+                // 1. فقرة جدول الأسعار الشامل (لن تعبر إلا عند الانتهاء من كامل الجدول)
+                switchStage('stageTable');
+                await animateAndScrollTable();
+
+                // 2. فقرة الأصناف المميزة (مع أنيميشن محاكي للبحث في جوجل)
+                if (dataStore.FeaturedProducts.length > 0) {
+                    switchStage('stageFeatured');
+                    await playGoogleSearchAnimation();
+                    await sleep(8000);
+                }
+
+                // 3. فقرة الخدمات التفصيلية
+                switchStage('stageServices');
+                await sleep(9000);
+
+                // 4. فقرة العروض والتنويهات
+                switchStage('stageOffers');
+                renderOffersBoard();
+                await sleep(10000);
+
+                // 5. فقرة عناوين الفروع (مستقلة)
+                switchStage('stageBranches');
+                renderBranchesStage();
+                await sleep(9000);
+
+                // 6. فقرة أرقام التليفون والتواصل (مستقلة)
+                switchStage('stageContacts');
+                renderContactsStage();
+                await sleep(9000);
+            }
+        }
+
+        function switchStage(stageId) {
             document.querySelectorAll('.stage-view').forEach(el => el.classList.remove('active'));
+            document.getElementById(stageId).classList.add('active');
+        }
 
-            if (!isConnected) {
-                document.getElementById('stageOffline').classList.add('active');
-                return;
-            }
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-            const activeStages = ['stageTable', 'stageFeatured', 'stageServices', 'stageOffers', 'stageInfo'];
-            currentStageIndex = (currentStageIndex + 1) % activeStages.length;
-            const currentStageId = activeStages[currentStageIndex];
+        // حركة التمرير الهادئة لجدول الأسعار (حجم الشاشة بالكامل)
+        function animateAndScrollTable() {
+            return new Promise((resolve) => {
+                const body = document.getElementById('tableBody');
+                body.scrollTop = 0;
+                
+                setTimeout(() => {
+                    const scrollHeight = body.scrollHeight;
+                    const clientHeight = body.clientHeight;
+                    const maxScroll = scrollHeight - clientHeight;
 
-            if (currentStageId === 'stageTable') {
-                startAutoScrollTable();
-            } else if (currentStageId === 'stageFeatured' && dataStore.FeaturedProducts.length > 0) {
+                    if (maxScroll <= 0) {
+                        setTimeout(resolve, 8000); // إذا كان الجدول قليل الأسطر
+                        return;
+                    }
+
+                    // حساب سرعة الحركة براحة تامة وحجم الشاشة
+                    const duration = Math.max(10, (maxScroll / 30)); 
+                    gsap.to(body, {
+                        scrollTop: maxScroll,
+                        duration: duration,
+                        ease: "none",
+                        onComplete: () => {
+                            setTimeout(resolve, 4000); // الانتظار لقراءة الآخير
+                        }
+                    });
+                }, 1500);
+            });
+        }
+
+        // أنيميشن محاكي البحث في جوجل للأصناف المميزة
+        function playGoogleSearchAnimation() {
+            return new Promise((resolve) => {
                 const item = dataStore.FeaturedProducts[featuredIndex];
-                document.getElementById('featuredCard').innerHTML = `
-                    <span class="badge-featured">⭐ صنف ممتاز وعرض خاص ⭐</span>
-                    <div class="item-title">${item.ItemName}</div>
-                    ${item.OldPrice ? `<div class="old-price-tag">السعر السابق: ${item.OldPrice} ج.م</div>` : ''}
-                    <div class="price-boxes">
-                        <div class="p-box">
-                            <div class="label">سعر القطاعي</div>
-                            <div class="val price-retail">${item.RetailPrice} ج.م</div>
-                        </div>
-                        <div class="p-box wholesale">
-                            <div class="label">سعر الجملة</div>
-                            <div class="val price-wholesale">${item.WholesalePrice} ج.م</div>
-                        </div>
-                    </div>
-                `;
                 featuredIndex = (featuredIndex + 1) % dataStore.FeaturedProducts.length;
-            } else if (currentStageId === 'stageOffers') {
-                // بناء التتر المسطر والمقسم بنفس أسلوب C# المرجعي بالضبط
-                const rawOffers = dataStore.Offers && dataStore.Offers.length > 0 
-                    ? dataStore.Offers 
-                    : ["فرصة عاجلة ومحدودة لكل المربين وأصحاب المزارع!", "أقوى العروض والتخفيضات اليومية متوفرة الآن بالصيدلية", "احصل على أفضل جودة معتمدة لأعلى إنتاجية لحلالك"];
-                
-                const linesContainer = document.getElementById('boardLinesContent');
-                linesContainer.innerHTML = rawOffers.map(line => `<div class="board-line-item">◀◀ ${line}</div>`).join('');
 
-            } else if (currentStageId === 'stageInfo') {
-                // بناء تتر كروت العناوين والفروع بنظام List-Cards تماماً مثل C#
-                const list = [...(dataStore.Branches || []), ...(dataStore.Contacts || [])];
-                const infoList = list.length > 0 
-                    ? list 
-                    : ["📍 الفرع الرئيسي: الشارع العام - بجوار المركز الطبي", "📞 للطلب والاستفسار: 01092834429 - 01210902302"];
-                
-                const cardsContainer = document.getElementById('contactCardsList');
-                cardsContainer.innerHTML = infoList.map(item => `<div class="contact-card-item">${item}</div>`).join('');
-            }
+                // إعادة تهيئة الكارت
+                const card = document.getElementById('featuredCard');
+                gsap.set(card, { opacity: 0, y: 40 });
 
-            document.getElementById(currentStageId).classList.add('active');
-        }, 10000);
+                if (typedInstance) typedInstance.destroy();
+
+                const pharmacyNameClean = dataStore.PharmacyName || "صيدلية الدكتور أحمد المميزة";
+                typedInstance = new Typed('#typedSearch', {
+                    strings: [`عناصر ${pharmacyNameClean}...`, `أحدث العروض: ${item.ItemName}`],
+                    typeSpeed: 50,
+                    backSpeed: 30,
+                    showCursor: true,
+                    cursorChar: '|',
+                    onComplete: () => {
+                        // إظهار كارت المنتج بأنيميشن شيك بعد الكتابة
+                        gsap.to(card, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 1,
+                            ease: "back.out(1.7)"
+                        });
+
+                        card.innerHTML = `
+                            <span class="badge-featured">⭐ صنف ممتاز وعرض خاص ⭐</span>
+                            <div class="item-title">${item.ItemName}</div>
+                            ${item.OldPrice ? `<div class="old-price-tag">السعر السابق: ${item.OldPrice} ج.م</div>` : ''}
+                            <div class="price-boxes">
+                                <div class="p-box">
+                                    <div class="label">سعر القطاعي</div>
+                                    <div class="val price-retail">${item.RetailPrice} ج.م</div>
+                                </div>
+                                <div class="p-box wholesale">
+                                    <div class="label">سعر الجملة</div>
+                                    <div class="val price-wholesale">${item.WholesalePrice} ج.م</div>
+                                </div>
+                            </div>
+                        `;
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        function renderOffersBoard() {
+            const rawOffers = dataStore.Offers && dataStore.Offers.length > 0 
+                ? dataStore.Offers 
+                : ["فرصة عاجلة ومحدودة لكل المربين وأصحاب المزارع!", "أقوى العروض والتخفيضات اليومية متوفرة الآن بالصيدلية", "احصل على أفضل جودة معتمدة لأعلى إنتاجية لحلالك"];
+            
+            document.getElementById('boardLinesContent').innerHTML = rawOffers.map(line => `<div class="board-line-item">◀◀ ${line}</div>`).join('');
+        }
+
+        function renderBranchesStage() {
+            const branches = dataStore.Branches && dataStore.Branches.length > 0 
+                ? dataStore.Branches 
+                : ["الفرع الرئيسي: الشارع العام - بجوار المركز الطبي", "فرع المزرعة: طريق الخطاطبة - بجوار الجمعية الزراعية"];
+            
+            document.getElementById('branchesGrid').innerHTML = branches.map(b => `
+                <div class="branch-card">
+                    <span class="branch-icon">🏢</span>
+                    <div class="branch-info-text">${b}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderContactsStage() {
+            const contacts = dataStore.Contacts && dataStore.Contacts.length > 0 
+                ? dataStore.Contacts 
+                : ["01092834429", "01210902302"];
+            
+            document.getElementById('contactsList').innerHTML = contacts.map((c, i) => `
+                <div class="contact-card">
+                    <span class="contact-label">📞 خط الخدمة والمبيعات (${i + 1}):</span>
+                    <span class="contact-number">${c}</span>
+                </div>
+            `).join('');
+        }
     </script>
 </body>
 </html>

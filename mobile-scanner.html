@@ -15,6 +15,8 @@
             --text-dark: #0f172a;
             --success-bg: #dcfce7;
             --success-text: #15803d;
+            --error-bg: #fee2e2;
+            --error-text: #b91c1c;
         }
 
         * { 
@@ -64,7 +66,6 @@
             text-align: center;
         }
 
-        /* حاوية الفيديو والتركيز */
         .reader-wrapper {
             position: relative;
             width: 100%;
@@ -78,16 +79,14 @@
             border: none !important;
         }
 
-        /* إخفاء إعلانات المكتبة واقتراحات الكاميرا المدمجة */
         #reader img[alt="Info icon"], #reader span {
             display: none !important;
         }
 
-        /* حالة الاتصال */
         .status { 
             margin-top: 18px; 
             font-weight: 700; 
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--primary-teal); 
             background: #ccfbf1;
             padding: 14px 16px;
@@ -97,19 +96,25 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            word-break: break-all;
         }
 
         .status.success {
             background: var(--success-bg);
             color: var(--success-text);
         }
+
+        .status.error {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>🩺 الربط السريع بالشاشة الكبيرة</h1>
-        <p>وجه كاميرا الموبايل نحو كود QR للربط المباشر</p>
+        <h1>🩺 الاقتران بالشاشة الرئيسية</h1>
+        <p>وجه الكاميرا نحو كود الـ IP الخاص بالبرنامج</p>
     </div>
 
     <div class="scanner-card">
@@ -122,18 +127,16 @@
     <script>
         const html5QrCode = new Html5Qrcode("reader");
 
-        // إعدادات عالية السرعة والدقة
         const config = {
-            fps: 30, // تسريع قراءة الفريمات إلى 30 لقطة/ثانية
+            fps: 30,
             qrbox: function(viewfinderWidth, viewfinderHeight) {
-                // ضبط الحجم تلقائياً بحسب حجم الشاشة
                 const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
                 const edge = Math.floor(minEdge * 0.75);
                 return { width: edge, height: edge };
             },
             videoConstraints: {
-                facingMode: "environment", // الكاميرا الخلفية
-                focusMode: "continuous",   // تركيز تلقائي مستمر
+                facingMode: "environment",
+                focusMode: "continuous",
                 width: { min: 640, ideal: 1280, max: 1920 },
                 height: { min: 480, ideal: 720, max: 1080 }
             }
@@ -143,28 +146,78 @@
             { facingMode: "environment" },
             config,
             (decodedText) => {
-                // عند القراءة بنجاح
+                // إيقاف الماسح بعد القراءة الناجحة
                 html5QrCode.stop();
+
                 const statusEl = document.getElementById('status');
-                statusEl.innerText = "✅ تم الاقتران بنجاح! جاري الاتصال...";
+                statusEl.innerText = "✅ تم التقاط رابط الاقتران!";
                 statusEl.classList.add('success');
-                
-                if (window.opener) {
-                    window.opener.postMessage({ type: "CONNECT_WS", url: decodedText }, "*");
-                    setTimeout(() => window.close(), 1200);
-                } else {
-                    alert("تم قراءة رابط السيرفر بنجاح:\n" + decodedText);
-                }
+
+                // معالجة رابط الـ IP/WebSocket وإرساله لفتح الاتصال
+                handlePairingConnection(decodedText);
             },
             (errorMessage) => {
-                // معالجة صامتة لعدم وجود كود في الإطار الحالي
+                // معالجة صامتة أثناء البحث
             }
         ).then(() => {
-            document.getElementById('status').innerText = "📷 وجّه الكاميرا نحو كود الـ QR";
+            document.getElementById('status').innerText = "📷 وجه الكاميرا نحو كود الـ QR الخاص بالبرنامج";
         }).catch((err) => {
             console.error("تعذر تشغيل الكاميرا:", err);
-            document.getElementById('status').innerText = "⚠️ تعذر الوصول للكاميرا، يرجي السماح للصلاحيات.";
+            const statusEl = document.getElementById('status');
+            statusEl.innerText = "⚠️ تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات.";
+            statusEl.classList.add('error');
         });
+
+        // دالة التعامل مع كود الاقتران المسموح
+        function handlePairingConnection(connectionString) {
+            console.log("بيانات الاقتران المستلمة:", connectionString);
+
+            // 1. إذا كانت الصفحة مفتوحة من داخل WebBrowser/WebView في البرنامج الرئيسي
+            if (window.opener) {
+                window.opener.postMessage({ 
+                    type: "CONNECT_IP", 
+                    payload: connectionString 
+                }, "*");
+
+                setTimeout(() => window.close(), 1000);
+            } 
+            // 2. إذا تم فتح الاتصال مباشرة عبر WebSocket من داخل الموبايل
+            else if (connectionString.startsWith("ws://") || connectionString.startsWith("wss://")) {
+                connectWebSocketDirectly(connectionString);
+            } 
+            // 3. إذا كان الرابط IP عالي (HTTP/HTTPS)
+            else if (connectionString.startsWith("http://") || connectionString.startsWith("https://")) {
+                window.location.href = connectionString;
+            } 
+            // 4. نص/توكن اقتران خام
+            else {
+                alert("تم استلام كود الاقتران:\n" + connectionString);
+            }
+        }
+
+        // دالة اختيارية للربط المباشر بـ WebSocket إن كان الرابط يبدأ بـ ws://
+        function connectWebSocketDirectly(wsUrl) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerText = "🔄 جاري إقامة اتصال مباشر بـ WebSocket...";
+            
+            try {
+                const socket = new WebSocket(wsUrl);
+
+                socket.onopen = () => {
+                    statusEl.innerText = "🟢 تم الاقتران والاتصال بالسيرفر بنجاح!";
+                    socket.send(JSON.stringify({ event: "PAIRED", client: "MobileScanner" }));
+                };
+
+                socket.onerror = (error) => {
+                    statusEl.innerText = "❌ فشل الاتصال برابط الـ IP الممسوح.";
+                    statusEl.classList.remove('success');
+                    statusEl.classList.add('error');
+                };
+            } catch (e) {
+                statusEl.innerText = "⚠️ صيغة رابط الاتصال غير مدعومة.";
+                statusEl.classList.add('error');
+            }
+        }
     </script>
 </body>
 </html>

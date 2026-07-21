@@ -400,9 +400,12 @@
             TickerText: "مرحباً بكم في صيدليتنا البيطرية.."
         };
 
-        // 🔧 رابط الـ QR Code الموجه إلى ماسح الموبايل
+        // 🆔 1. توليد رقم جلسة عشوائي ومميز لشاشة التلفزيون
+        const tvSessionId = "TV_" + Math.floor(100000 + Math.random() * 900000);
+
+        // 🔧 رابط الـ QR Code الموجه إلى ماسح الموبايل محملاً بمعرف الجلسة sid
         const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-        const scannerMobileUrl = window.location.protocol + "//" + window.location.host + currentPath + "/mobile-scanner.html";
+        const scannerMobileUrl = window.location.protocol + "//" + window.location.host + currentPath + "/mobile-scanner.html?sid=" + tvSessionId;
         
         new QRCode(document.getElementById("qrcode"), { 
             text: scannerMobileUrl, 
@@ -411,14 +414,38 @@
             correctLevel : QRCode.CorrectLevel.H
         });
 
-        // 1️⃣ الاستماع للرسائل القادمة من نافذة الموبايل المنبثقة
-        window.addEventListener("message", (event) => {
-            if (event.data && event.data.type === "CONNECT_WS") {
-                connectToServer(event.data.url);
-            }
-        });
+        // 📡 2. الربط عبر سيرفر إشارات مجاني (PieSocket / Relay WebSocket) لاستقبال البيانات من الموبايل
+        function initRelayListener() {
+            try {
+                // خادم إشارات مجاني عام للربط اللحظي بين الأجهزة المختلفة
+                const relayWs = new WebSocket("wss://free.piehost.com/v3/channel_relay?api_key=o83A7S2J8E9k&notify_self=0");
+                
+                relayWs.onopen = () => {
+                    console.log("تم الاشتراك في قناة الإشارات الخاصة بالتلفزيون:", tvSessionId);
+                };
 
-        // 2️⃣ ✨ الميزة الجديدة: الفحص التلقائي لبرامتر الـ URL عند فتح الصفحة مباشر من الموبايل
+                relayWs.onmessage = (event) => {
+                    try {
+                        const msg = JSON.parse(event.data);
+                        // إذا كانت الرسالة موجهة لهذه الشاشة وبها رابط سيرفر الـ WebSocket
+                        if (msg.targetSid === tvSessionId && msg.wsUrl) {
+                            console.log("تم استقبال رابط السيرفر من الموبايل:", msg.wsUrl);
+                            connectToServer(msg.wsUrl);
+                        }
+                    } catch(e) {}
+                };
+
+                relayWs.onerror = () => {
+                    // إعادة المحاولة في حالة انقطاع شبكة الإشارات
+                    setTimeout(initRelayListener, 3000);
+                };
+            } catch (e) {
+                console.error("Relay connection error", e);
+            }
+        }
+        initRelayListener();
+
+        // 3️⃣ الفحص التلقائي لبرامتر الـ URL (في حال تم الدخول بالرابط المباشر)
         window.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
             const wsFromUrl = urlParams.get('ws');
